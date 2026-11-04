@@ -1,20 +1,17 @@
-FROM node:20-alpine AS base
-
-FROM base AS builder
+# ---- Compilación ----
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
+# ---- Servidor estático ----
+FROM nginx:1.27-alpine
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+# Genera /config.json con la URL del backend al arrancar el contenedor (variable API_URL).
+COPY docker/40-config.sh /docker-entrypoint.d/40-config.sh
+RUN chmod +x /docker-entrypoint.d/40-config.sh
+COPY --from=build /app/dist/front-friotrack/browser /usr/share/nginx/html
+ENV API_URL=http://localhost:8080
 EXPOSE 3000
-
-CMD ["node", "server.js"]
