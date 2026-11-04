@@ -16,6 +16,7 @@ interface Item {
 const NAV: { grupo: string; items: Item[] }[] = [
   { grupo: 'Operación', items: [
     { ruta: '/dashboard', texto: 'Panel', icono: 'panel' },
+    { ruta: '/escanear', texto: 'Escanear', icono: 'escaner' },
     { ruta: '/lotes', texto: 'Lotes', icono: 'lote' },
     { ruta: '/despachos', texto: 'Despachos', icono: 'despacho' },
     { ruta: '/controles', texto: 'Controles', icono: 'control' },

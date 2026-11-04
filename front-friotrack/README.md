@@ -72,6 +72,7 @@ Acepta patrones (`https://*.vercel.app`, `https://*.netlify.app`). En Docker se 
 |---|---|---|
 | `/login` | Inicio de sesión | `POST /api/auth/login` |
 | `/dashboard` | Indicadores de cumplimiento, lotes, despachos, incidencias y eventos recientes | `GET /api/dashboard` |
+| `/escanear` | Lectura de QR / código de barras con la cámara (zxing) o pistola lectora; resuelve lotes y despachos | `/api/lote/codigo`, `/api/despacho/codigo` |
 | `/lotes`, `/lotes/:id` | Listado, registro y edición; ficha con gráfico de temperatura, despachos, lecturas, no conformidades, evidencias y línea de tiempo; bloquear / liberar / descartar | `/api/lote`, `/api/trazabilidad/lote/{id}` |
 | `/despachos`, `/despachos/:id` | Listado, registro; lotes asociados, salida, entrega, cancelación, lecturas y cadena de custodia | `/api/despacho`, `/api/trazabilidad/despacho/{id}` |
 | `/controles` | Registro de lecturas y lecturas fuera de rango | `/api/control` |
@@ -100,13 +101,15 @@ src/app/
     api.ts        cliente HTTP (promesas), errores uniformes del backend, paginación
     auth.ts       sesión JWT (signals), interceptor, guards y permisos por rol
     carga.ts      estado de carga/envío con signals
-    config.ts     URL del backend leída de config.json
+    config.ts     URL del backend y nombre de la marca leídos de config.json
+    codigos.ts    lectura de códigos escaneados, QR y Code 128 para etiquetas
     types.ts      tipos de los DTOs (JSON snake_case)
     format.ts     fechas, números y etiquetas; pipes en pipes.ts
   shared/
     ui.ts         insignias, alertas, modal, paginación, KPI, iconos
     dominio.ts    gráfico de temperatura, línea de tiempo, tablas y listas
     formularios.ts  lote, despacho, lectura de control, no conformidad
+    etiqueta.ts   etiqueta imprimible con QR y código de barras
   features/       una página por ruta (lazy loading) + shell con el menú lateral
 docker/           nginx y script de configuración en tiempo de ejecución
 ```
