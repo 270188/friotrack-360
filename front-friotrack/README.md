@@ -26,13 +26,15 @@ npm start            # http://localhost:3000
 
 **Pruebas unitarias:** `npm test` (Vitest).
 
-## URL del backend
+## URL del backend y nombre de la marca
 
-Se lee al iniciar la aplicación desde `public/config.json`:
+Se leen al iniciar la aplicación desde `public/config.json`:
 
 ```json
-{ "apiUrl": "http://localhost:8080" }
+{ "apiUrl": "http://localhost:8080", "nombre": "FrioTrack 360" }
 ```
+
+Al publicar se cambian con las variables `API_URL` y `APP_NAME`.
 
 En Docker ese archivo se genera al arrancar el contenedor a partir de la variable de entorno `API_URL` (ver `docker/40-config.sh`), así que no hace falta recompilar para apuntar a otro backend.
 

@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Auth, type Permiso } from '../core/auth';
+import { nombreMarca } from '../core/config';
 import { EtiquetaPipe } from '../core/pipes';
 import { Icono } from '../shared/ui';
 
@@ -34,11 +35,11 @@ const NAV: { grupo: string; items: Item[] }[] = [
   selector: 'app-shell',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NgTemplateOutlet, Icono, EtiquetaPipe],
   template: `
-    <ng-template #marca>
+    <ng-template #bloqueMarca>
       <div class="flex items-center gap-2.5 px-6 py-5">
         <span class="grid size-8 place-items-center rounded-lg bg-frost-500 text-white"><app-icono nombre="copo" /></span>
         <div class="leading-tight">
-          <p class="text-sm font-bold text-white">FrioTrack 360</p>
+          <p class="text-sm font-bold text-white">{{ marca }}</p>
           <p class="text-[11px] text-ink-300">Trazabilidad en frío</p>
         </div>
       </div>
@@ -80,7 +81,7 @@ const NAV: { grupo: string; items: Item[] }[] = [
 
     <div class="min-h-screen lg:pl-64">
       <aside class="fixed inset-y-0 left-0 hidden w-64 flex-col bg-ink-900 lg:flex">
-        <ng-container [ngTemplateOutlet]="marca" />
+        <ng-container [ngTemplateOutlet]="bloqueMarca" />
         <ng-container [ngTemplateOutlet]="nav" />
         <ng-container [ngTemplateOutlet]="usuario" />
       </aside>
@@ -88,7 +89,7 @@ const NAV: { grupo: string; items: Item[] }[] = [
       <div class="sticky top-0 z-30 flex items-center justify-between bg-ink-900 px-4 py-3 lg:hidden">
         <div class="flex items-center gap-2 text-white">
           <span class="grid size-7 place-items-center rounded-md bg-frost-500"><app-icono nombre="copo" clase="size-4" /></span>
-          <span class="text-sm font-bold">FrioTrack 360</span>
+          <span class="text-sm font-bold">{{ marca }}</span>
         </div>
         <button type="button" (click)="menu.set(true)" class="cursor-pointer rounded-md p-2 text-white" aria-label="Abrir menú"><app-icono nombre="menu" /></button>
       </div>
@@ -96,7 +97,7 @@ const NAV: { grupo: string; items: Item[] }[] = [
         <div class="fixed inset-0 z-40 lg:hidden">
           <div class="absolute inset-0 bg-ink-950/60" (click)="menu.set(false)"></div>
           <aside class="absolute inset-y-0 left-0 flex w-72 flex-col bg-ink-900">
-            <ng-container [ngTemplateOutlet]="marca" />
+            <ng-container [ngTemplateOutlet]="bloqueMarca" />
             <ng-container [ngTemplateOutlet]="nav" />
             <ng-container [ngTemplateOutlet]="usuario" />
           </aside>
@@ -110,6 +111,7 @@ const NAV: { grupo: string; items: Item[] }[] = [
 })
 export class Shell {
   auth = inject(Auth);
+  marca = nombreMarca();
   menu = signal(false);
   iniciales = computed(() => (this.auth.sesion()?.username ?? '').slice(0, 2));
   grupos = computed(() => {

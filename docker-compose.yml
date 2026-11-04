@@ -64,6 +64,8 @@ services:
     environment:
       # URL del backend vista desde el navegador del usuario (no desde la red de Docker).
       API_URL: ${API_URL:-http://localhost:8080}
+      # Nombre que se muestra en la interfaz (marca)
+      APP_NAME: ${APP_NAME:-FrioTrack 360}
     ports:
       - "3000:3000"
     depends_on:
