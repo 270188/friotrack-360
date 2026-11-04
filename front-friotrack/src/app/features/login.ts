@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { mensajeError } from '../core/api';
 import { Auth } from '../core/auth';
+import { nombreMarca } from '../core/config';
 import { Alerta, Icono } from '../shared/ui';
 
 @Component({
@@ -14,7 +15,7 @@ import { Alerta, Icono } from '../shared/ui';
         <app-icono nombre="copo" clase="size-[28rem]" class="pointer-events-none absolute -right-24 -bottom-24 text-ink-800" />
         <div class="relative flex items-center gap-3">
           <span class="grid size-10 place-items-center rounded-xl bg-frost-500"><app-icono nombre="copo" clase="size-6" /></span>
-          <span class="text-lg font-bold">FrioTrack 360</span>
+          <span class="text-lg font-bold">{{ marca }}</span>
         </div>
         <div class="relative max-w-md">
           <h1 class="text-4xl leading-tight font-bold">Cada lote, cada lectura, cada decisión.</h1>
@@ -37,7 +38,7 @@ import { Alerta, Icono } from '../shared/ui';
           <div>
             <div class="mb-6 flex items-center gap-2 lg:hidden">
               <span class="grid size-9 place-items-center rounded-lg bg-frost-500 text-white"><app-icono nombre="copo" /></span>
-              <span class="text-lg font-bold">FrioTrack 360</span>
+              <span class="text-lg font-bold">{{ marca }}</span>
             </div>
             <h2 class="text-2xl font-bold text-ink-900">Iniciar sesión</h2>
             <p class="mt-1 text-sm text-ink-700">Ingresa con tu usuario asignado.</p>
@@ -57,6 +58,7 @@ import { Alerta, Icono } from '../shared/ui';
     </div>`,
 })
 export class LoginPage {
+  marca = nombreMarca();
   private auth = inject(Auth);
   private router = inject(Router);
   private route = inject(ActivatedRoute);

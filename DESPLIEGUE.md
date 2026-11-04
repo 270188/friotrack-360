@@ -55,6 +55,7 @@ El navegador de cada usuario llama al backend directamente, así que el backend 
 1. En [vercel.com/new](https://vercel.com/new) importa `friotrack-360`.
 2. **Root Directory:** `front-friotrack`. `vercel.json` ya define la instalación, la compilación, la carpeta de salida y la redirección de rutas.
 3. **Environment Variables:** `API_URL` = URL del backend del paso 2 (sin `/` final).
+   Opcional: `APP_NAME` = nombre que mostrará la interfaz (por ejemplo, `POLAR PIURA SAC`).
 4. Deploy. Cada push a `main` vuelve a publicar.
 5. Copia el dominio final (por ejemplo `https://friotrack-360.vercel.app`) y agrégalo en `APP_CORS_ORIGINS` del backend si no lo cubre `https://*.vercel.app`.
 
@@ -85,3 +86,14 @@ docker compose up -d --build
 ```
 
 Delante va un proxy con HTTPS (Caddy o Nginx con Let's Encrypt) que envíe `tu-dominio.com` → puerto 3000 y `api.tu-dominio.com` → puerto 8080.
+
+## Varias empresas con el mismo código
+
+Cada empresa es una instancia independiente: su propio proyecto en Railway (base de datos + backend) y su propio proyecto en Vercel, todos desde este mismo repositorio. Lo que cambia son las variables:
+
+| Instancia | Vercel `APP_NAME` | Vercel `API_URL` | Railway `APP_CORS_ORIGINS` |
+|---|---|---|---|
+| FrioTrack 360 | *(sin definir)* | backend del proyecto `friotrack-360` | `https://friotrack-360.vercel.app` |
+| POLAR PIURA SAC | `POLAR PIURA SAC` | backend del proyecto `polar-piura-sac` | `https://polar-piura-sac.vercel.app` |
+
+Los datos de una empresa nunca se mezclan con los de otra porque cada una tiene su propia base de datos.

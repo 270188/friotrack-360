@@ -1,6 +1,9 @@
 #!/bin/sh
-# Escribe la URL del backend (vista desde el navegador) en config.json.
+# Escribe config.json al arrancar el contenedor:
+#   API_URL   URL del backend vista desde el navegador
+#   APP_NAME  nombre que se muestra en la interfaz
 set -e
 URL="${API_URL:-http://localhost:8080}"
-printf '{\n  "apiUrl": "%s"\n}\n' "$URL" > /usr/share/nginx/html/config.json
-echo "FrioTrack 360: API_URL=$URL"
+NOMBRE=$(printf '%s' "${APP_NAME:-FrioTrack 360}" | sed 's/\\/\\\\/g; s/"/\\"/g')
+printf '{\n  "apiUrl": "%s",\n  "nombre": "%s"\n}\n' "$URL" "$NOMBRE" > /usr/share/nginx/html/config.json
+echo "$NOMBRE: API_URL=$URL"

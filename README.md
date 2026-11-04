@@ -130,6 +130,7 @@ Sin la base de pruebas, las pruebas de integración se omiten y solo corren las 
 | `APP_BOOTSTRAP_USERNAME` / `_PASSWORD` | backend | Usuario inicial si la tabla está vacía | `admin` / `admin123` |
 | `PORT` | backend | Puerto HTTP (lo fijan Railway, Render, etc.) | `8080` |
 | `API_URL` | frontend | URL del backend vista desde el navegador | `http://localhost:8080` |
+| `APP_NAME` | frontend | Nombre que se muestra en el menú, el login y la pestaña (por ejemplo, el de la empresa cliente) | `FrioTrack 360` |
 
 ## Despliegue
 
