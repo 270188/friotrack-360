@@ -1,12 +1,5 @@
-node_modules/
-.next/
-out/
-build/
+node_modules
+dist
+.angular
+.vscode
 *.log
-.git/
-.env*
-!.env.example
-.vercel
-.turbo
-*.tsbuildinfo
-next-env.d.eslint.cache

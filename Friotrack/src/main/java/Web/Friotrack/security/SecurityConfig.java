@@ -2,6 +2,7 @@ package Web.Friotrack.security;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,11 +36,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            JwtAuthFilter jwtAuthFilter,
-                                           ObjectMapper objectMapper) throws Exception {
+                                           ObjectMapper objectMapper,
+                                           @Value("${app.cors.allowed-origins:http://localhost:3000,http://127.0.0.1:3000}")
+                                           String origenesPermitidos) throws Exception {
 
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsSource()))
+                .cors(cors -> cors.configurationSource(corsSource(origenesPermitidos)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/error", "/actuator/health").permitAll()
@@ -68,9 +71,16 @@ public class SecurityConfig {
                 .build();
     }
 
-    private org.springframework.web.cors.CorsConfigurationSource corsSource() {
+    /**
+     * Origenes permitidos separados por coma (app.cors.allowed-origins / APP_CORS_ORIGINS).
+     * Acepta patrones, por ejemplo https://*.vercel.app o https://*.netlify.app.
+     */
+    private org.springframework.web.cors.CorsConfigurationSource corsSource(String origenesPermitidos) {
         var config = new org.springframework.web.cors.CorsConfiguration();
-        config.setAllowedOriginPatterns(java.util.List.of("http://localhost:3000", "http://127.0.0.1:3000"));
+        config.setAllowedOriginPatterns(java.util.Arrays.stream(origenesPermitidos.split(","))
+                .map(String::trim)
+                .filter(o -> !o.isEmpty())
+                .toList());
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));

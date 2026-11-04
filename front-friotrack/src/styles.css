@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* Paleta FrioTrack: tinta profunda, hielo y un acento cian; naranja reservado para desviaciones. */
+@theme {
+  --color-ink-950: #071923;
+  --color-ink-900: #0b2533;
+  --color-ink-800: #16465a;
+  --color-ink-700: #3e5a66;
+  --color-ink-500: #6b8590;
+  --color-ink-300: #a9bcc4;
+  --color-ice-50: #f5fafb;
+  --color-ice-100: #eaf5f7;
+  --color-ice-200: #d4ecf0;
+  --color-frost-300: #7fd1dc;
+  --color-frost-500: #12a4b8;
+  --color-frost-600: #0e8797;
+  --color-alert-50: #fff1ec;
+  --color-alert-500: #f2643d;
+  --color-alert-600: #d9502b;
+  --color-ok-50: #e9f7f0;
+  --color-ok-500: #2e9e6b;
+  --color-warn-50: #fff7e6;
+  --color-warn-500: #e8a317;
+
+  --font-sans: ui-sans-serif, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: var(--color-ice-50);
+  color: var(--color-ink-900);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1;
+}
+
+/* Campos de formulario consistentes */
+.campo {
+  @apply w-full rounded-lg border border-ink-300/70 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition placeholder:text-ink-500 focus:border-frost-500 focus:ring-2 focus:ring-frost-500/20 disabled:bg-ice-100 disabled:text-ink-500;
+}
+
+.etiqueta {
+  @apply mb-1 block text-xs font-semibold tracking-wide text-ink-700 uppercase;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-frost-500);
+  outline-offset: 2px;
+}
+
+/* ---- Componentes base (tarjetas, botones, tablas) ---- */
+.tarjeta {
+  @apply min-w-0 rounded-xl border border-ink-300/40 bg-white shadow-sm;
+}
+.titulo-seccion {
+  @apply flex items-center justify-between gap-3 border-b border-ink-300/30 px-5 py-3.5;
+}
+.titulo-seccion h2 {
+  @apply text-sm font-bold tracking-wide text-ink-900;
+}
+.btn {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+.btn-primario { @apply bg-ink-900 text-white hover:bg-ink-800; }
+.btn-secundario { @apply border border-ink-300/70 bg-white text-ink-900 hover:bg-ice-100; }
+.btn-peligro { @apply bg-alert-500 text-white hover:bg-alert-600; }
+.btn-exito { @apply bg-ok-500 text-white hover:brightness-95; }
+.btn-fantasma { @apply text-ink-700 hover:bg-ice-100; }
+.btn-sm { @apply px-2 py-1 text-xs; }
+.enlace { @apply text-xs font-semibold text-frost-600 hover:underline; }
+.spinner { @apply inline-block size-3.5 animate-spin rounded-full border-2 border-current border-r-transparent; }
+
+.tabla-wrap { @apply overflow-x-auto; }
+.tabla { @apply w-full min-w-[640px] text-left text-sm; }
+.tabla th { @apply border-b border-ink-300/30 bg-ice-50 px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-500 uppercase; }
+.tabla td { @apply border-b border-ink-300/20 px-4 py-3 align-middle text-ink-800; }
+
+.dato dt { @apply text-xs font-semibold tracking-wide text-ink-500 uppercase; }
+.dato dd { @apply mt-0.5 text-sm text-ink-900; }
+
+.pestana { @apply cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition; }
+.pestana-activa { @apply bg-ink-900 text-white; }
+.pestana-inactiva { @apply bg-white text-ink-700 ring-1 ring-ink-300/50 hover:bg-ice-100; }
+
+.grid-form { @apply grid gap-4 sm:grid-cols-2; }
+.col-completa { @apply sm:col-span-2; }
+.acciones-form { @apply flex justify-end gap-2 sm:col-span-2; }

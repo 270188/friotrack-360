@@ -18,9 +18,9 @@ El valor del sistema no está en el CRUD sino en poder reconstruir la historia d
 
 ```text
 ┌──────────────────────────┐
-│  Frontend — Next.js 16   │   React 19, App Router
+│  Frontend — Angular 21   │   Standalone, signals, Tailwind
 └────────────┬─────────────┘
-             │ HTTP / JSON  (NEXT_PUBLIC_API_URL)
+             │ HTTP / JSON  (config.json → API_URL)
              ▼
 ┌──────────────────────────┐
 │  Backend — Spring Boot   │   JPA / Hibernate, JWT
@@ -460,6 +460,7 @@ Implementado en `Friotrack` (Spring Boot 4.1, Java 21). Base: `/api`.
 - Las operaciones de estado (bloquear, liberar, descartar, cambiar estado) son endpoints dedicados, no `PUT` genéricos: son las que escriben `evento`.
 - `spring.jpa.open-in-view=false`: **los servicios devuelven DTOs**, nunca entidades. Mapear dentro del controlador lanzaría `LazyInitializationException` en cualquier relación perezosa.
 - Errores uniformes: `{ "timestamp", "status", "error", "mensaje", "ruta", "campos" }`. `400` validación (con errores por campo) o valor de enum inválido, `401` sin token o inválido, `403` rol insuficiente, `404` no existe, `405` método no permitido (con cabecera `Allow`), `409` duplicado, `415` `Content-Type` no soportado, `422` regla de negocio.
+- CORS: los orígenes permitidos se configuran con `app.cors.allowed-origins` (variable `APP_CORS_ORIGINS`, separados por coma, admite patrones como `https://*.vercel.app`). Por defecto, `http://localhost:3000`.
 - `/api/usuario/**`: lectura permitida a los cuatro roles (el frontend necesita listar responsables); escritura solo `ADMIN`.
 
 ### Endpoints

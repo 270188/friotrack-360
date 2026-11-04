@@ -1,27 +1,38 @@
 {
   "name": "front-friotrack",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.0.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "postbuild": "node scripts/config.mjs",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
   },
+  "private": true,
   "dependencies": {
-    "next": "16.3.4",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@angular/build": "^21.2.29",
+    "@angular/cli": "^21.2.29",
+    "@angular/compiler-cli": "^21.2.0",
+    "@tailwindcss/postcss": "^4.3.4",
+    "jsdom": "^28.0.0",
+    "postcss": "^8.5.32",
+    "prettier": "^3.8.1",
+    "tailwindcss": "^4.3.4",
+    "typescript": "~5.9.2",
+    "vitest": "~4.0.18"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }
