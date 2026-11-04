@@ -18,7 +18,7 @@ import java.util.List;
  *   -e MYSQL_DATABASE=friotrack360_test -p 3307:3306 mysql:8.0
  * # esperar a que acepte conexiones y cargar el esquema:
  * docker exec -i friotrack-test mysql -uroot -p1234 friotrack360_test \
- *   &lt; friotrack360_simplificado.sql
+ *   &lt; ../friotrack360.sql
  * ./mvnw verify -Dfriotrack.test.port=3307
  * </pre>
  *
@@ -59,7 +59,7 @@ public final class TestDbConfig {
 
     /**
      * Las pruebas de integracion solo corren contra la base de pruebas y solo si el
-     * esquema de {@code friotrack360_simplificado.sql} esta cargado.
+     * esquema de {@code friotrack360.sql} esta cargado.
      */
     public static boolean available() {
         try (Connection connection = DriverManager.getConnection(jdbcUrl(), USUARIO, PASSWORD);

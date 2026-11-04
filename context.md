@@ -1,8 +1,8 @@
 # FrioTrack 360 — Contexto de Implementación
 
-> Documento de referencia técnica. Describe **lo que está implementado**: el modelo de datos de `friotrack360_simplificado.sql` (9 tablas, MySQL 8) y el contrato que el backend y el frontend deben respetar.
+> Documento de referencia técnica. Describe **lo que está implementado**: el modelo de datos de `friotrack360.sql` (9 tablas, MySQL 8) y el contrato que el backend y el frontend deben respetar.
 >
-> El documento original de alcance del proyecto (`FrioTrack 360 — Contexto del Proyecto.md`) permanece como especificación académica. Cuando diverjan, **manda este documento** para la implementación y `friotrack360_simplificado.sql` para el esquema.
+> El documento original de alcance del proyecto (`FrioTrack 360 — Contexto del Proyecto.md`) permanece como especificación académica. Cuando diverjan, **manda este documento** para la implementación y `friotrack360.sql` para el esquema.
 
 ---
 
@@ -44,7 +44,7 @@ El valor del sistema no está en el CRUD sino en poder reconstruir la historia d
 ### Carga de la base
 
 ```bash
-mysql -u root -p friotrack360 < friotrack360_simplificado.sql
+mysql -u root -p friotrack360 < friotrack360.sql
 ```
 
 El script no incluye `CREATE DATABASE` ni `USE`; la base debe existir antes (la crea el servicio `mysql` de `docker-compose.yml`, que monta este mismo script en `docker-entrypoint-initdb.d`). El script **no inserta datos**: el primer usuario lo crea el backend al arrancar (§10, *Primer usuario*).
