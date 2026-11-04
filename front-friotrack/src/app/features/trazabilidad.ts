@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Api, ApiError, mensajeError } from '../core/api';
 import type { Despacho, Lote } from '../core/types';
 import { Alerta, Icono } from '../shared/ui';
 
 @Component({
   selector: 'app-trazabilidad',
-  imports: [FormsModule, Alerta, Icono],
+  imports: [FormsModule, RouterLink, Alerta, Icono],
   template: `
     <header class="mb-6">
       <h1 class="text-2xl font-bold tracking-tight text-ink-900">Trazabilidad</h1>
@@ -30,6 +30,8 @@ import { Alerta, Icono } from '../shared/ui';
         </button>
       </form>
       @if (error()) { <app-alerta class="mt-4">{{ error() }}</app-alerta> }
+      <p class="mt-4 text-sm text-ink-700">¿Tienes la etiqueta a la mano?
+        <a routerLink="/escanear" class="inline-flex items-center gap-1 font-semibold text-frost-600 hover:underline"><app-icono nombre="escaner" clase="size-4" /> Escanéala con la cámara</a></p>
     </section>
 
     <section class="mt-8">

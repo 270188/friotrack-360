@@ -4,12 +4,13 @@ import { RouterLink } from '@angular/router';
 import { Api, mensajeError } from '../core/api';
 import { Auth } from '../core/auth';
 import { accion, carga } from '../core/carga';
-import { etiqueta } from '../core/format';
+import { etiqueta, fechaHora } from '../core/format';
 import { EtiquetaPipe, FechaHoraPipe, NumPipe } from '../core/pipes';
 import type { Despacho, DespachoItem, EstadoDespacho, Lote, TrazabilidadDespacho } from '../core/types';
 import { ConfirmarMotivo, LineaTiempo, ListaEvidencias, ListaIncidencias, TablaControles } from '../shared/dominio';
 import { FormControl, FormDespacho } from '../shared/formularios';
-import { Alerta, Cargando, Insignia, Modal, Vacio } from '../shared/ui';
+import { ModalEtiqueta } from '../shared/etiqueta';
+import { Alerta, Cargando, Icono, Insignia, Modal, Vacio } from '../shared/ui';
 
 const TRANSICIONES: Record<EstadoDespacho, EstadoDespacho[]> = {
   PENDIENTE: ['PREPARACION', 'EN_TRANSITO', 'CANCELADO'],
@@ -84,7 +85,7 @@ export class AgregarLote {
   selector: 'app-despacho-detalle',
   imports: [
     RouterLink, Alerta, Cargando, Insignia, Vacio, LineaTiempo, ListaIncidencias, ListaEvidencias, TablaControles,
-    ConfirmarMotivo, FormDespacho, FormControl, AgregarLote, EtiquetaPipe, FechaHoraPipe, NumPipe,
+    ConfirmarMotivo, FormDespacho, FormControl, AgregarLote, ModalEtiqueta, Icono, EtiquetaPipe, FechaHoraPipe, NumPipe,
   ],
   template: `
     @if (despacho.error()) { <app-alerta>{{ despacho.error() }}</app-alerta> }
@@ -97,16 +98,17 @@ export class AgregarLote {
             <h1 class="flex flex-wrap items-center gap-3 text-2xl font-bold tracking-tight text-ink-900">{{ d.codigo }} <app-insignia [valor]="d.estado" /></h1>
             <p class="mt-1 text-sm text-ink-700">Destino: {{ d.destino }}@if (d.direccion_destino) { · {{ d.direccion_destino }} }</p>
           </div>
-          @if (auth.puede('escribir') && !terminal()) {
-            <div class="flex flex-wrap items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <button class="btn btn-secundario" (click)="etiqueta.set(true)"><app-icono nombre="qr" clase="size-4" /> Etiqueta QR</button>
+            @if (auth.puede('escribir') && !terminal()) {
               <button class="btn btn-secundario" (click)="editar.set(true)">Editar</button>
               <button class="btn btn-secundario" (click)="lectura.set(true)">Registrar lectura</button>
               @for (e of transiciones(); track e) {
                 <button class="btn" [class]="e === 'CANCELADO' ? 'btn-fantasma' : e === 'ENTREGADO' ? 'btn-exito' : 'btn-primario'"
                   (click)="destino.set(e)">{{ texto[e] }}</button>
               }
-            </div>
-          }
+            }
+          </div>
         </header>
 
         @if (aviso()) { <app-alerta class="mb-4" tono="ok">{{ aviso() }}</app-alerta> }
@@ -205,6 +207,9 @@ export class AgregarLote {
           <app-agregar-lote [idDespacho]="d.id_despacho" [yaIncluidos]="incluidos()" (cerrar)="agregar.set(false)"
             (guardado)="agregar.set(false); aviso.set($event); recargar()" />
         }
+        @if (etiqueta()) {
+          <app-modal-etiqueta tipo="despacho" [codigo]="d.codigo" [titulo]="'Destino: ' + d.destino" [datos]="datosEtiqueta()" (cerrar)="etiqueta.set(false)" />
+        }
         @if (lectura()) {
           <app-form-control [despacho]="d" (cerrar)="lectura.set(false)" (guardado)="lectura.set(false); recargar()" />
         }
@@ -222,6 +227,7 @@ export class DespachoDetallePage {
   editar = signal(false);
   agregar = signal(false);
   lectura = signal(false);
+  etiqueta = signal(false);
 
   despacho = carga(() => this.api.get<Despacho>(`/api/despacho/${this.id()}`), { inmediato: false });
   traza = carga(() => this.api.get<TrazabilidadDespacho>(`/api/trazabilidad/despacho/${this.id()}`), { inmediato: false });
@@ -230,6 +236,17 @@ export class DespachoDetallePage {
   terminal = computed(() => ['ENTREGADO', 'CANCELADO'].includes(this.despacho.data()?.estado ?? ''));
   transiciones = computed(() => TRANSICIONES[this.despacho.data()?.estado ?? 'ENTREGADO']);
   incluidos = computed(() => (this.items.data() ?? []).map((i) => i.lote.id_lote));
+  datosEtiqueta = computed(() => {
+    const d = this.despacho.data();
+    if (!d) return [];
+    const datos = [{ k: 'Programado', v: fechaHora(d.fecha_programada) }];
+    if (d.direccion_destino) datos.push({ k: 'Dirección', v: d.direccion_destino });
+    if (d.transportista) datos.push({ k: 'Transportista', v: d.transportista });
+    if (d.placa) datos.push({ k: 'Placa', v: d.placa });
+    const n = this.items.data()?.length;
+    if (n) datos.push({ k: 'Lotes', v: String(n) });
+    return datos;
+  });
   vehiculo = computed(() => {
     const d = this.despacho.data();
     return [d?.vehiculo, d?.placa].filter(Boolean).join(' · ') || '—';

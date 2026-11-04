@@ -7,7 +7,9 @@ import { FechaHoraPipe, FechaPipe, NumPipe, RangoPipe } from '../core/pipes';
 import type { Lote, Producto, TrazabilidadLote } from '../core/types';
 import { ConfirmarMotivo, Grafico, LineaTiempo, ListaEvidencias, ListaIncidencias, TablaControles } from '../shared/dominio';
 import { FormIncidencia, FormLote } from '../shared/formularios';
-import { Alerta, Cargando, Insignia, Vacio } from '../shared/ui';
+import { fecha, num, rango } from '../core/format';
+import { ModalEtiqueta } from '../shared/etiqueta';
+import { Alerta, Cargando, Icono, Insignia, Vacio } from '../shared/ui';
 
 type AccionLote = 'bloquear' | 'liberar' | 'descartar';
 
@@ -15,7 +17,7 @@ type AccionLote = 'bloquear' | 'liberar' | 'descartar';
   selector: 'app-lote-detalle',
   imports: [
     RouterLink, Alerta, Cargando, Insignia, Vacio, Grafico, LineaTiempo, ListaIncidencias, ListaEvidencias, TablaControles,
-    ConfirmarMotivo, FormLote, FormIncidencia, FechaPipe, FechaHoraPipe, NumPipe, RangoPipe,
+    ConfirmarMotivo, FormLote, FormIncidencia, ModalEtiqueta, Icono, FechaPipe, FechaHoraPipe, NumPipe, RangoPipe,
   ],
   template: `
     @if (t.error()) { <app-alerta>{{ t.error() }}</app-alerta> }
@@ -31,6 +33,7 @@ type AccionLote = 'bloquear' | 'liberar' | 'descartar';
           <p class="mt-1 text-sm text-ink-700">{{ t.producto.nombre }} · {{ t.cantidad | num: 3 }} {{ t.unidad }}</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
+          <button class="btn btn-secundario" (click)="etiqueta.set(true)"><app-icono nombre="qr" clase="size-4" /> Etiqueta QR</button>
           @if (auth.puede('escribir') && !terminal()) { <button class="btn btn-secundario" (click)="editar.set(true)">Editar</button> }
           @if (auth.puede('calidad')) {
             <button class="btn btn-secundario" (click)="nuevaInc.set(true)">Registrar no conformidad</button>
@@ -132,6 +135,9 @@ type AccionLote = 'bloquear' | 'liberar' | 'descartar';
         <app-form-lote [productos]="productos.data() ?? [t.producto]" [lote]="t" (cerrar)="editar.set(false)"
           (guardado)="editar.set(false); aviso.set('Lote actualizado.'); recargar()" />
       }
+      @if (etiqueta()) {
+        <app-modal-etiqueta tipo="lote" [codigo]="t.codigo_lote" [titulo]="t.producto.nombre" [datos]="datosEtiqueta()" (cerrar)="etiqueta.set(false)" />
+      }
       @if (nuevaInc()) {
         <app-form-incidencia [idLote]="t.id_lote" [codigoLote]="t.codigo_lote" (cerrar)="nuevaInc.set(false)"
           (guardado)="nuevaInc.set(false); aviso.set('No conformidad registrada.'); recargar()" />
@@ -145,6 +151,7 @@ export class LoteDetallePage {
   accion = signal<AccionLote | null>(null);
   editar = signal(false);
   nuevaInc = signal(false);
+  etiqueta = signal(false);
   aviso = signal<string | null>(null);
   textos: Record<AccionLote, { titulo: string; boton: string; aviso: string }> = {
     bloquear: { titulo: 'Bloquear lote', boton: 'Bloquear', aviso: 'Lote bloqueado. No podrá incluirse en nuevos despachos.' },
@@ -157,6 +164,17 @@ export class LoteDetallePage {
 
   terminal = computed(() => ['DESCARTADO', 'ENTREGADO'].includes(this.t.data()?.estado ?? ''));
   fueraRango = computed(() => (this.t.data()?.controles ?? []).filter((c) => c.resultado === 'FUERA_RANGO').length);
+  datosEtiqueta = computed(() => {
+    const t = this.t.data();
+    if (!t) return [];
+    const datos = [
+      { k: 'Producción', v: fecha(t.fecha_produccion) },
+      { k: 'Vence', v: fecha(t.fecha_vencimiento) },
+      { k: 'Cantidad', v: `${num(t.cantidad, 3)} ${t.unidad ?? ''}`.trim() },
+    ];
+    if (t.producto.define_rango_temperatura) datos.push({ k: 'Conservar', v: rango(t.producto.temperatura_min, t.producto.temperatura_max, '°C') });
+    return datos;
+  });
   tieneHumedad = computed(() => (this.t.data()?.controles ?? []).some((c) => c.humedad != null));
 
   constructor() {

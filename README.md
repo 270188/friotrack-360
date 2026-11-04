@@ -78,6 +78,13 @@ npm install
 npm start
 ```
 
+## Escáner y etiquetas
+
+- **Escanear** (menú *Operación*): lee con la cámara del celular o de la PC el QR o el código de barras de un lote o despacho y muestra su estado con acceso directo a la trazabilidad. También acepta pistolas lectoras USB/Bluetooth, que escriben el código en el campo de búsqueda.
+- **Etiqueta QR** (detalle de cada lote y despacho): genera una etiqueta de 90 × 56 mm con QR, código de barras Code 128 y los datos principales, lista para imprimir en varias copias.
+- El QR lleva la dirección `…/escanear?tipo=lote&codigo=LOT-…`: si se lee con la cámara nativa del celular, abre el sistema directamente en ese lote (tras iniciar sesión).
+- La cámara del navegador solo funciona con HTTPS (Vercel) o en `localhost`.
+
 ## Roles
 
 | Rol | Puede |

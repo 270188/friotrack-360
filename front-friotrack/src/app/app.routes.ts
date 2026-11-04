@@ -11,6 +11,7 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', title: 'Panel', loadComponent: () => import('./features/dashboard').then((m) => m.DashboardPage) },
+      { path: 'escanear', title: 'Escanear', loadComponent: () => import('./features/escanear').then((m) => m.EscanearPage) },
       { path: 'lotes', title: 'Lotes', loadComponent: () => import('./features/lotes').then((m) => m.LotesPage) },
       { path: 'lotes/:id', title: 'Lote', loadComponent: () => import('./features/lote-detalle').then((m) => m.LoteDetallePage) },
       { path: 'despachos', title: 'Despachos', loadComponent: () => import('./features/despachos').then((m) => m.DespachosPage) },
