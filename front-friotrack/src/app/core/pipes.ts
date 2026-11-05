@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { etiqueta, fecha, fechaHora, num, rango } from './format';
+import { dinero, etiqueta, fecha, fechaHora, num, rango } from './format';
 
 @Pipe({ name: 'fecha' })
 export class FechaPipe implements PipeTransform {
@@ -22,6 +22,13 @@ export class NumPipe implements PipeTransform {
   }
 }
 
+@Pipe({ name: 'dinero' })
+export class DineroPipe implements PipeTransform {
+  transform(v: number | null | undefined): string {
+    return dinero(v);
+  }
+}
+
 @Pipe({ name: 'etiqueta' })
 export class EtiquetaPipe implements PipeTransform {
   transform(v: string | null | undefined): string {
@@ -36,4 +43,4 @@ export class RangoPipe implements PipeTransform {
   }
 }
 
-export const PIPES = [FechaPipe, FechaHoraPipe, NumPipe, EtiquetaPipe, RangoPipe] as const;
+export const PIPES = [FechaPipe, FechaHoraPipe, NumPipe, DineroPipe, EtiquetaPipe, RangoPipe] as const;

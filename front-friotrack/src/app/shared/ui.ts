@@ -19,6 +19,7 @@ const PATHS: Record<string, string> = {
   buscar: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14M20 20l-4-4',
   mas: 'M12 5v14M5 12h14',
   cerrar: 'M6 6l12 12M18 6 6 18',
+  factura: 'M6 3h9l4 4v14l-2.5-1.5L14 21l-2-1.5-2 1.5-2.5-1.5L5 21V4a1 1 0 0 1 1-1M15 3v4h4M8.5 11h7M8.5 14.5h7M8.5 8h3',
   escaner: 'M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10',
   qr: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2zM18 14h2M14 18v2',
   imprimir: 'M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z',
@@ -57,6 +58,7 @@ const TONO_ESTADO: Record<string, Tono> = {
   ABIERTA: 'alerta', EN_PROCESO: 'aviso', RESUELTA: 'ok', CERRADA: 'neutro',
   BAJA: 'neutro', MEDIA: 'info', ALTA: 'aviso', CRITICA: 'alerta',
   ACTIVO: 'ok', INACTIVO: 'neutro',
+  ACEPTADO: 'ok', OBSERVADO: 'aviso', RECHAZADO: 'alerta', ERROR: 'alerta', NO_ENVIADO: 'neutro',
 };
 
 @Component({

@@ -26,6 +26,9 @@ const NAV: { grupo: string; items: Item[] }[] = [
     { ruta: '/trazabilidad', texto: 'Trazabilidad', icono: 'traza' },
     { ruta: '/eventos', texto: 'Historial', icono: 'evento' },
   ] },
+  { grupo: 'Facturación', items: [
+    { ruta: '/comprobantes', texto: 'Comprobantes', icono: 'factura' },
+  ] },
   { grupo: 'Configuración', items: [
     { ruta: '/productos', texto: 'Productos', icono: 'producto' },
     { ruta: '/usuarios', texto: 'Usuarios', icono: 'usuario', permiso: 'usuarios' },

@@ -97,3 +97,22 @@ Cada empresa es una instancia independiente: su propio proyecto en Railway (base
 | POLAR PIURA SAC | `POLAR PIURA SAC` | backend del proyecto `polar-piura-sac` | `https://polar-piura-sac.vercel.app` |
 
 Los datos de una empresa nunca se mezclan con los de otra porque cada una tiene su propia base de datos.
+
+## Facturación electrónica (SUNAT)
+
+Las tablas `comprobante` y `comprobante_item` se crean solas al arrancar el backend, también en bases que ya existían (`db/comprobantes.sql`).
+
+**Modo prueba (por defecto).** No hace falta configurar nada para probar: el backend usa el entorno beta de SUNAT, el usuario `RUC + MODDATOS` y el certificado de prueba incluido. Solo se ajustan los datos del emisor en las variables del servicio `backend`. Así está la instancia de POLAR PIURA SAC:
+
+| Variable | Valor |
+|---|---|
+| `SUNAT_RAZON_SOCIAL` | `POLAR PIURA S.A.C.` |
+| `SUNAT_NOMBRE_COMERCIAL` | `POLAR PIURA SAC` |
+| `SUNAT_RUC` | `20000000001` (RUC de prueba) |
+| `SUNAT_UBIGEO` / `SUNAT_DEPARTAMENTO` / `SUNAT_PROVINCIA` / `SUNAT_DISTRITO` | `200101` / `PIURA` / `PIURA` / `PIURA` |
+| `SUNAT_DIRECCION` | dirección fiscal |
+| `SUNAT_SERIE_FACTURA` / `_BOLETA` / `_GUIA` | `FPP1` / `BPP1` / `TPP1` |
+
+Para comprobar la conexión con SUNAT: `SUNAT_PRUEBA_AL_INICIAR=true` envía al arrancar una factura y una boleta de prueba (series `FT99` / `BT99`, no se guardan) y escribe la respuesta en el log (`=== PRUEBA SUNAT ...`). Después vuelve a ponerla en `false`.
+
+**Producción (emisión real).** Solo con autorización de la empresa: RUC real inscrito como emisor electrónico, `SUNAT_USUARIO_SOL` y `SUNAT_CLAVE_SOL` de un usuario secundario SOL, un certificado digital vigente (`SUNAT_CERTIFICADO=file:/ruta/certificado.p12` y `SUNAT_CERTIFICADO_CLAVE`), `SUNAT_ENTORNO=PRODUCCION` y `SUNAT_URL=https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService`. El envío de guías en producción usa otra API de SUNAT (REST con credenciales GRE) que no está implementada.

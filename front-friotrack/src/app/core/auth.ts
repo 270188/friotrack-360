@@ -14,12 +14,13 @@ export interface Sesion extends Credenciales {
  * Permisos de la interfaz. Reflejan SecurityConfig del backend
  * (el backend sigue siendo quien decide: aquí solo se ocultan acciones no permitidas).
  */
-export type Permiso = 'escribir' | 'calidad' | 'productos' | 'usuarios';
+export type Permiso = 'escribir' | 'calidad' | 'productos' | 'usuarios' | 'facturar';
 const MATRIZ: Record<Permiso, Rol[]> = {
   escribir: ['ADMIN', 'OPERADOR', 'CALIDAD'],
   calidad: ['ADMIN', 'CALIDAD'],
   productos: ['ADMIN'],
   usuarios: ['ADMIN'],
+  facturar: ['ADMIN', 'OPERADOR'],
 };
 
 const CLAVE = 'friotrack.session';

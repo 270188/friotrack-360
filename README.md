@@ -85,6 +85,20 @@ npm start
 - El QR lleva la dirección `…/escanear?tipo=lote&codigo=LOT-…`: si se lee con la cámara nativa del celular, abre el sistema directamente en ese lote (tras iniciar sesión).
 - La cámara del navegador solo funciona con HTTPS (Vercel) o en `localhost`.
 
+## Facturación electrónica SUNAT (modo prueba)
+
+Menú **Facturación → Comprobantes**: facturas, boletas y guías de remisión con el nombre de la empresa emisora (variables `SUNAT_*`).
+
+| Comprobante | Qué hace el sistema | Estado en modo prueba |
+|---|---|---|
+| Factura (01) y boleta (03) | Arma el XML UBL 2.1, lo firma, lo envía al **entorno beta de SUNAT** (`sendBill`) y guarda la constancia de recepción (CDR) | SUNAT la valida y responde *aceptada*, *observada* o *rechazada*; no tiene valor tributario |
+| Guía de remisión remitente (09) | Arma y firma el XML (desde un despacho: destino, placa y lotes se completan solos) | *No enviada*: SUNAT no ofrece entorno de pruebas para guías |
+
+- Cada comprobante se descarga en **PDF** (representación impresa con QR y hash, con la marca *DOCUMENTO DE PRUEBA*), **XML** firmado y **CDR**.
+- Emiten `ADMIN` y `OPERADOR`; los demás roles solo consultan.
+- El núcleo está en `Friotrack/src/main/java/Web/Friotrack/sunat` (Java puro: XML, firma XMLDSig, SOAP y CDR). Incluye un certificado de prueba autofirmado (`resources/sunat/certificado-prueba.p12`), que el entorno beta acepta.
+- Para emitir **de verdad** haría falta el RUC real, el usuario y la clave SOL, un certificado digital vigente y `SUNAT_ENTORNO=PRODUCCION` con la URL de producción. Ver `DESPLIEGUE.md`.
+
 ## Roles
 
 | Rol | Puede |
@@ -109,6 +123,7 @@ Todas las rutas, salvo el login, exigen `Authorization: Bearer <token>`. El JSON
 | Controles | `POST /api/control` · `GET /api/control?idDespacho&idLote` · `GET /api/control/fuera-de-rango` |
 | Incidencias | `GET/POST /api/incidencia` · `PATCH /api/incidencia/{id}/estado` · `GET/POST /api/incidencia/{id}/evidencias` |
 | Eventos | `GET/POST /api/evento` · `GET /api/evento/timeline/lote/{id}` |
+| Comprobantes | `GET /api/comprobante?tipo&q` · `GET /api/comprobante/emisor` · `POST /api/comprobante/venta` · `POST /api/comprobante/guia` · `GET /api/comprobante/{id}` · `/{id}/xml` · `/{id}/cdr` · `POST /api/comprobante/{id}/reenviar` |
 | Usuarios | `GET/POST /api/usuario` · `PUT/DELETE /api/usuario/{id}` · `PATCH /api/usuario/{id}/activar` |
 
 El detalle completo (permisos por rol, estados y reglas de negocio) está en [`context.md`](context.md).
@@ -137,6 +152,11 @@ Sin la base de pruebas, las pruebas de integración se omiten y solo corren las 
 | `APP_BOOTSTRAP_USERNAME` / `_PASSWORD` | backend | Usuario inicial si la tabla está vacía | `admin` / `admin123` |
 | `PORT` | backend | Puerto HTTP (lo fijan Railway, Render, etc.) | `8080` |
 | `API_URL` | frontend | URL del backend vista desde el navegador | `http://localhost:8080` |
+| `SUNAT_RAZON_SOCIAL`, `SUNAT_NOMBRE_COMERCIAL`, `SUNAT_RUC` | backend | Emisor de los comprobantes | `EMPRESA DE PRUEBA S.A.C.`, RUC `20000000001` |
+| `SUNAT_DIRECCION`, `SUNAT_UBIGEO`, `SUNAT_DEPARTAMENTO` / `_PROVINCIA` / `_DISTRITO` | backend | Domicilio fiscal del emisor | Lima |
+| `SUNAT_SERIE_FACTURA` / `_BOLETA` / `_GUIA` | backend | Series de numeración | `F001`, `B001`, `T001` |
+| `SUNAT_ENTORNO`, `SUNAT_URL`, `SUNAT_USUARIO_SOL`, `SUNAT_CLAVE_SOL` | backend | Conexión con SUNAT | `BETA`, servicio beta, `MODDATOS` / `moddatos` |
+| `SUNAT_CERTIFICADO`, `SUNAT_CERTIFICADO_CLAVE` | backend | Certificado PKCS#12 (`classpath:` o `file:`) | certificado de prueba incluido |
 | `APP_NAME` | frontend | Nombre que se muestra en el menú, el login y la pestaña (por ejemplo, el de la empresa cliente) | `FrioTrack 360` |
 
 ## Despliegue

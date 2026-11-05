@@ -78,6 +78,7 @@ Acepta patrones (`https://*.vercel.app`, `https://*.netlify.app`). En Docker se 
 | `/controles` | Registro de lecturas y lecturas fuera de rango | `/api/control` |
 | `/incidencias`, `/incidencias/:id` | Cola por estado y prioridad; causa, acción correctiva, cambio de estado y evidencias | `/api/incidencia` |
 | `/trazabilidad` | Búsqueda por código de lote o despacho | `/api/lote/codigo`, `/api/despacho/codigo` |
+| `/comprobantes`, `/comprobantes/nuevo/:tipo`, `/comprobantes/:id` | Facturas, boletas y guías de remisión (SUNAT beta): emisión, estado de SUNAT, PDF (jsPDF), XML y CDR | `/api/comprobante` |
 | `/eventos` | Historial de auditoría con filtros y registro de eventos manuales | `/api/evento` |
 | `/productos` | Productos y umbrales de temperatura/humedad | `/api/producto` |
 | `/usuarios` | Gestión de usuarios y roles (solo ADMIN) | `/api/usuario` |
@@ -103,6 +104,7 @@ src/app/
     carga.ts      estado de carga/envío con signals
     config.ts     URL del backend y nombre de la marca leídos de config.json
     codigos.ts    lectura de códigos escaneados, QR y Code 128 para etiquetas
+    sunat.ts      catálogos e importes de comprobantes; pdf-comprobante.ts genera el PDF
     types.ts      tipos de los DTOs (JSON snake_case)
     format.ts     fechas, números y etiquetas; pipes en pipes.ts
   shared/
