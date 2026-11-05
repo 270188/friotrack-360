@@ -114,7 +114,7 @@ public class ComprobanteService {
     public Archivo cdr(Long id) {
         Comprobante c = entidad(id);
         if (c.getCdrBase64() == null) {
-            throw new NotFoundException("El comprobante " + c.numero() + " no tiene constancia de recepcion (CDR)");
+            throw new NotFoundException("El comprobante " + c.numero() + " no tiene constancia de recepción (CDR)");
         }
         return new Archivo("R-" + nombreArchivo(c) + ".zip", "application/zip", Base64.getDecoder().decode(c.getCdrBase64()));
     }
@@ -123,7 +123,7 @@ public class ComprobanteService {
     public ComprobanteDto.Detalle emitirVenta(ComprobanteDto.VentaRequest r) {
         boolean factura = DocumentoSunat.FACTURA.equals(r.tipo());
         if (factura && !("6".equals(r.clienteTipoDoc()) && r.clienteNumDoc().length() == 11)) {
-            throw new BusinessRuleException("La factura requiere el RUC (11 digitos) del cliente");
+            throw new BusinessRuleException("La factura requiere el RUC (11 dígitos) del cliente");
         }
         validarDocumento(r.clienteTipoDoc(), r.clienteNumDoc());
         for (ComprobanteDto.ItemRequest i : r.items()) {
@@ -185,10 +185,10 @@ public class ComprobanteService {
     public ComprobanteDto.Detalle reenviar(Long id) {
         Comprobante c = entidad(id);
         if (DocumentoSunat.GUIA_REMISION.equals(c.getTipo())) {
-            throw new BusinessRuleException("SUNAT no tiene entorno de pruebas para la guia de remision: no se envia");
+            throw new BusinessRuleException("SUNAT no tiene entorno de pruebas para la guía de remisión: no se envía");
         }
         if (c.getEstadoSunat() != Comprobante.EstadoSunat.ERROR && c.getEstadoSunat() != Comprobante.EstadoSunat.PENDIENTE) {
-            throw new BusinessRuleException("Solo se reenvian comprobantes que no llegaron a SUNAT (estado ERROR o PENDIENTE)");
+            throw new BusinessRuleException("Solo se reenvían comprobantes que no llegaron a SUNAT (estado ERROR o PENDIENTE)");
         }
         enviar(c, c.getXmlFirmado().getBytes(StandardCharsets.UTF_8));
         return detalle(comprobanteRepository.save(c));
@@ -199,7 +199,7 @@ public class ComprobanteService {
         validarDocumento(r.clienteTipoDoc(), r.clienteNumDoc());
         boolean publico = "01".equals(r.modalidad());
         if (publico && (vacio(r.transportistaRuc()) || vacio(r.transportistaNombre()))) {
-            throw new BusinessRuleException("En transporte publico indica el RUC y la razon social del transportista");
+            throw new BusinessRuleException("En transporte público indica el RUC y la razón social del transportista");
         }
         if (!publico && (vacio(r.conductorDni()) || vacio(r.conductorNombres()) || vacio(r.conductorApellidos())
                 || vacio(r.conductorLicencia()) || vacio(r.placa()))) {
@@ -253,11 +253,11 @@ public class ComprobanteService {
         c.setHash(firmado.hash());
         if (sunat.esPrueba()) {
             c.setEstadoSunat(Comprobante.EstadoSunat.NO_ENVIADO);
-            c.setDescripcionRespuesta("SUNAT no ofrece entorno de pruebas para la guia de remision electronica: "
-                    + "el XML se genero y firmo en el formato oficial, pero no se envio.");
+            c.setDescripcionRespuesta("SUNAT no ofrece entorno de pruebas para la guía de remisión electrónica: "
+                    + "el XML se generó y firmó en el formato oficial, pero no se envió.");
         } else {
             c.setEstadoSunat(Comprobante.EstadoSunat.NO_ENVIADO);
-            c.setDescripcionRespuesta("El envio de guias a SUNAT (API REST con credenciales GRE) no esta implementado.");
+            c.setDescripcionRespuesta("El envío de guías a SUNAT (API REST con credenciales GRE) no está implementado.");
         }
         comprobanteRepository.save(c);
         registrarEvento(c);
@@ -317,10 +317,10 @@ public class ComprobanteService {
 
     private static void validarDocumento(String tipo, String numero) {
         if ("1".equals(tipo) && numero.length() != 8) {
-            throw new BusinessRuleException("El DNI debe tener 8 digitos");
+            throw new BusinessRuleException("El DNI debe tener 8 dígitos");
         }
         if ("6".equals(tipo) && numero.length() != 11) {
-            throw new BusinessRuleException("El RUC debe tener 11 digitos");
+            throw new BusinessRuleException("El RUC debe tener 11 dígitos");
         }
     }
 
@@ -328,7 +328,7 @@ public class ComprobanteService {
         return switch (tipo) {
             case "01" -> "Factura";
             case "03" -> "Boleta";
-            case "09" -> "Guia de remision";
+            case "09" -> "Guía de remisión";
             default -> "Comprobante";
         };
     }

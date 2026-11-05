@@ -74,6 +74,10 @@ export class Api {
   del<T = void>(path: string) {
     return this.run(() => this.http.delete<T>(urlApi() + path));
   }
+  /** Descarga un archivo (XML, ZIP) con el token de la sesión. */
+  descargar(path: string) {
+    return this.run(() => this.http.get(urlApi() + path, { responseType: 'blob' }));
+  }
   async pagina<T>(path: string, q?: Query): Promise<Page<T>> {
     return normalizarPagina<T>(await this.get<unknown>(path, q));
   }

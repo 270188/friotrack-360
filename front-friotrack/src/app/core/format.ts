@@ -46,6 +46,12 @@ export function num(v: number | null | undefined, dec = 2) {
   return Number(v).toLocaleString("es-PE", { minimumFractionDigits: 0, maximumFractionDigits: dec });
 }
 
+/** Importe con dos decimales fijos: 5.9 -> "5.90". */
+export function dinero(v: number | null | undefined) {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return "—";
+  return Number(v).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 export function rango(min: number | null | undefined, max: number | null | undefined, unidad: string) {
   if (min == null && max == null) return "Sin rango";
   if (min == null) return `≤ ${num(max)} ${unidad}`;
@@ -72,6 +78,11 @@ const ETIQUETAS: Record<string, string> = {
   OPERADOR: "Operador",
   CALIDAD: "Calidad",
   SUPERVISOR: "Supervisor",
+  ACEPTADO: "Aceptado",
+  OBSERVADO: "Aceptado con observaciones",
+  RECHAZADO: "Rechazado",
+  ERROR: "No enviado (error)",
+  NO_ENVIADO: "No enviado a SUNAT",
 };
 export function etiqueta(v: string | null | undefined) {
   if (!v) return "—";

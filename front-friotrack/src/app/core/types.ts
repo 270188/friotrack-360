@@ -294,3 +294,111 @@ export interface Dashboard {
   ultima_incidencia_resuelta: IncidenciaResumen[];
   eventos_recientes: TimelineItem[];
 }
+
+// ---------------------------------------------------------------------------
+// Comprobantes electrónicos (SUNAT)
+// ---------------------------------------------------------------------------
+/** Catálogo 01 de SUNAT: 01 factura, 03 boleta, 09 guía de remisión remitente. */
+export type TipoComprobante = '01' | '03' | '09';
+export type EstadoSunat = 'PENDIENTE' | 'ACEPTADO' | 'OBSERVADO' | 'RECHAZADO' | 'ERROR' | 'NO_ENVIADO';
+
+export interface EmisorSunat {
+  ruc: string;
+  razon_social: string;
+  nombre_comercial: string | null;
+  direccion: string;
+  distrito: string;
+  provincia: string;
+  departamento: string;
+  ubigeo: string;
+  entorno: string;
+  prueba: boolean;
+  serie_factura: string;
+  serie_boleta: string;
+  serie_guia: string;
+}
+
+export interface ComprobanteResumen {
+  id_comprobante: number;
+  tipo: TipoComprobante;
+  serie: string;
+  correlativo: number;
+  numero: string;
+  fecha_emision: string;
+  cliente_tipo_doc: string;
+  cliente_num_doc: string;
+  cliente_nombre: string;
+  moneda: string;
+  total: number;
+  estado_sunat: EstadoSunat;
+  codigo_respuesta: string | null;
+  id_despacho: number | null;
+  codigo_despacho: string | null;
+}
+
+export interface ComprobanteItem {
+  orden: number;
+  codigo: string | null;
+  descripcion: string;
+  unidad: string;
+  cantidad: number;
+  valor_unitario: number;
+  precio_unitario: number;
+  valor_venta: number;
+  igv: number;
+  total: number;
+}
+
+export interface Traslado {
+  motivo: string;
+  descripcion_motivo: string | null;
+  modalidad: '01' | '02';
+  fecha_traslado: string;
+  peso_kg: number;
+  transportista_ruc: string | null;
+  transportista_nombre: string | null;
+  conductor_dni: string | null;
+  conductor_nombres: string | null;
+  conductor_apellidos: string | null;
+  conductor_licencia: string | null;
+  placa: string | null;
+  partida_ubigeo: string;
+  partida_direccion: string;
+  llegada_ubigeo: string;
+  llegada_direccion: string;
+}
+
+export interface Comprobante {
+  id_comprobante: number;
+  tipo: TipoComprobante;
+  serie: string;
+  correlativo: number;
+  numero: string;
+  fecha_emision: string;
+  moneda: string;
+  cliente_tipo_doc: string;
+  cliente_num_doc: string;
+  cliente_nombre: string;
+  cliente_direccion: string | null;
+  op_gravada: number;
+  igv: number;
+  total: number;
+  monto_en_letras: string | null;
+  id_despacho: number | null;
+  codigo_despacho: string | null;
+  traslado: Traslado | null;
+  observacion: string | null;
+  entorno: string;
+  estado_sunat: EstadoSunat;
+  codigo_respuesta: string | null;
+  descripcion_respuesta: string | null;
+  observaciones_sunat: string[];
+  hash: string | null;
+  tiene_xml: boolean;
+  tiene_cdr: boolean;
+  fecha_envio: string | null;
+  username: string | null;
+  fecha_creacion: string;
+  items: ComprobanteItem[];
+  emisor: EmisorSunat;
+}

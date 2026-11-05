@@ -6,7 +6,8 @@ import { Auth } from '../core/auth';
 import { accion, carga } from '../core/carga';
 import { etiqueta, fechaHora } from '../core/format';
 import { EtiquetaPipe, FechaHoraPipe, NumPipe } from '../core/pipes';
-import type { Despacho, DespachoItem, EstadoDespacho, Lote, TrazabilidadDespacho } from '../core/types';
+import type { ComprobanteResumen, Despacho, DespachoItem, EstadoDespacho, Lote, TrazabilidadDespacho } from '../core/types';
+import { TIPOS } from '../core/sunat';
 import { ConfirmarMotivo, LineaTiempo, ListaEvidencias, ListaIncidencias, TablaControles } from '../shared/dominio';
 import { FormControl, FormDespacho } from '../shared/formularios';
 import { ModalEtiqueta } from '../shared/etiqueta';
@@ -100,6 +101,10 @@ export class AgregarLote {
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button class="btn btn-secundario" (click)="etiqueta.set(true)"><app-icono nombre="qr" clase="size-4" /> Etiqueta QR</button>
+            @if (auth.puede('facturar') && d.estado !== 'CANCELADO') {
+              <a class="btn btn-secundario" routerLink="/comprobantes/nuevo/guia" [queryParams]="{ despacho: d.id_despacho }"><app-icono nombre="factura" clase="size-4" /> Guía de remisión</a>
+              <a class="btn btn-secundario" routerLink="/comprobantes/nuevo/factura" [queryParams]="{ despacho: d.id_despacho }">Facturar</a>
+            }
             @if (auth.puede('escribir') && !terminal()) {
               <button class="btn btn-secundario" (click)="editar.set(true)">Editar</button>
               <button class="btn btn-secundario" (click)="lectura.set(true)">Registrar lectura</button>
@@ -170,6 +175,22 @@ export class AgregarLote {
           </section>
         </div>
 
+        @if (comprobantes.data()?.length) {
+          <section class="tarjeta mt-6">
+            <div class="titulo-seccion"><h2>Comprobantes electrónicos ({{ comprobantes.data()!.length }})</h2></div>
+            <ul class="divide-y divide-ink-300/20">
+              @for (cp of comprobantes.data(); track cp.id_comprobante) {
+                <li class="flex flex-wrap items-center gap-3 px-5 py-3">
+                  <a [routerLink]="['/comprobantes', cp.id_comprobante]" class="font-mono text-sm font-semibold text-ink-900 hover:text-frost-600 hover:underline">{{ cp.numero }}</a>
+                  <span class="text-xs text-ink-500">{{ tiposComprobante[cp.tipo].corto }} · {{ cp.cliente_nombre }}</span>
+                  <span class="flex-1"></span>
+                  <app-insignia [valor]="cp.estado_sunat" />
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
         <section class="tarjeta mt-6">
           <div class="titulo-seccion"><h2>Lecturas de control</h2></div>
           <app-tabla-controles [controles]="t.controles" contexto="despacho" />
@@ -232,6 +253,8 @@ export class DespachoDetallePage {
   despacho = carga(() => this.api.get<Despacho>(`/api/despacho/${this.id()}`), { inmediato: false });
   traza = carga(() => this.api.get<TrazabilidadDespacho>(`/api/trazabilidad/despacho/${this.id()}`), { inmediato: false });
   items = carga(() => this.api.get<DespachoItem[]>(`/api/despacho/${this.id()}/lotes`), { inmediato: false });
+  comprobantes = carga(() => this.api.get<ComprobanteResumen[]>(`/api/comprobante/despacho/${this.id()}`), { inmediato: false });
+  tiposComprobante = TIPOS;
 
   terminal = computed(() => ['ENTREGADO', 'CANCELADO'].includes(this.despacho.data()?.estado ?? ''));
   transiciones = computed(() => TRANSICIONES[this.despacho.data()?.estado ?? 'ENTREGADO']);
@@ -276,6 +299,7 @@ export class DespachoDetallePage {
     void this.despacho.recargar();
     void this.traza.recargar();
     void this.items.recargar();
+    void this.comprobantes.recargar();
   }
 
   async quitar(item: DespachoItem): Promise<void> {
