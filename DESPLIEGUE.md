@@ -102,16 +102,16 @@ Los datos de una empresa nunca se mezclan con los de otra porque cada una tiene 
 
 Las tablas `comprobante` y `comprobante_item` se crean solas al arrancar el backend, también en bases que ya existían (`db/comprobantes.sql`).
 
-**Modo prueba (por defecto).** No hace falta configurar nada para probar: el backend usa el entorno beta de SUNAT, el usuario `RUC + MODDATOS` y el certificado de prueba incluido. Solo se ajustan los datos del emisor en las variables del servicio `backend`. Así está la instancia de POLAR PIURA SAC:
+**Modo prueba (por defecto).** No hace falta configurar nada para probar: el backend usa el entorno beta de SUNAT, el usuario `RUC + MODDATOS` y el certificado de prueba incluido. Solo se ajustan los datos del emisor en las variables del servicio `backend` de cada instancia:
 
-| Variable | Valor |
-|---|---|
-| `SUNAT_RAZON_SOCIAL` | `POLAR PIURA S.A.C.` |
-| `SUNAT_NOMBRE_COMERCIAL` | `POLAR PIURA SAC` |
-| `SUNAT_RUC` | `20000000001` (RUC de prueba) |
-| `SUNAT_UBIGEO` / `SUNAT_DEPARTAMENTO` / `SUNAT_PROVINCIA` / `SUNAT_DISTRITO` | `200101` / `PIURA` / `PIURA` / `PIURA` |
-| `SUNAT_DIRECCION` | dirección fiscal |
-| `SUNAT_SERIE_FACTURA` / `_BOLETA` / `_GUIA` | `FPP1` / `BPP1` / `TPP1` |
+| Variable | FrioTrack 360 | POLAR PIURA SAC |
+|---|---|---|
+| `SUNAT_RAZON_SOCIAL` | `FRIOTRACK 360 S.A.C.` | `POLAR PIURA S.A.C.` |
+| `SUNAT_NOMBRE_COMERCIAL` | `FrioTrack 360` | `POLAR PIURA SAC` |
+| `SUNAT_RUC` | `20000000001` (RUC de prueba) | `20000000001` (RUC de prueba) |
+| `SUNAT_UBIGEO` / `SUNAT_DEPARTAMENTO` / `SUNAT_PROVINCIA` / `SUNAT_DISTRITO` | `150101` / `LIMA` / `LIMA` / `LIMA` | `200101` / `PIURA` / `PIURA` / `PIURA` |
+| `SUNAT_DIRECCION` | `LIMA - PERU` | `PIURA - PERU` |
+| `SUNAT_SERIE_FACTURA` / `_BOLETA` / `_GUIA` | `FFT1` / `BFT1` / `TFT1` | `FPP1` / `BPP1` / `TPP1` |
 
 Para comprobar la conexión con SUNAT: `SUNAT_PRUEBA_AL_INICIAR=true` envía al arrancar una factura y una boleta de prueba (series `FT99` / `BT99`, no se guardan) y escribe la respuesta en el log (`=== PRUEBA SUNAT ...`). Después vuelve a ponerla en `false`.
 
