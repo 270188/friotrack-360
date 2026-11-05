@@ -62,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/incidencia/**", "/api/evidencia/**")
                         .hasAnyRole("CALIDAD", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/evidencia/**").hasAnyRole("CALIDAD", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/comprobante/**").hasAnyRole("OPERADOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET).hasAnyRole("OPERADOR", "CALIDAD", "SUPERVISOR", "ADMIN")
                         .anyRequest().hasAnyRole("OPERADOR", "CALIDAD", "ADMIN"))
                 .exceptionHandling(ex -> ex
