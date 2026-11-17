@@ -1,0 +1,66 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.notificaciones {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  pointer-events: none;
+
+  @include m.desde(movil) {
+    left: auto;
+    width: 24rem;
+  }
+}
+
+.aviso {
+  @include m.tarjeta(0.75rem 0.75rem 0.75rem 1rem);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  border-left-width: 4px;
+  pointer-events: auto;
+  animation: entrar 0.2s ease-out;
+
+  &__texto {
+    flex: 1;
+    margin: 0;
+    font-size: 0.875rem;
+    color: v.tinta(900);
+  }
+
+  &__cerrar {
+    @include m.foco-visible;
+    border: 0;
+    background: none;
+    color: v.tinta(500);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      color: v.tinta(900);
+    }
+  }
+
+  // Un borde de color por tipo de aviso, generado desde el mapa $estados.
+  @each $tipo, $color in v.$estados {
+    &--#{$tipo} {
+      border-left-color: $color;
+    }
+  }
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}

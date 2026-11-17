@@ -78,6 +78,15 @@ npm install
 npm start
 ```
 
+## Contenidos del curso aplicados (semanas 11 a 14)
+
+| Semana | Tema | Dónde está en FrioTrack 360 |
+|---|---|---|
+| 11 | Fundamentos de Angular, generación de componentes y estilos con **SASS** | Angular 21 con componentes standalone. `ng generate component` crea `.ts`, `.html`, `.scss` y `.spec.ts` (configurado en `angular.json`). Parciales SASS en `front-friotrack/src/styles/` (`_variables.scss` con mapas y funciones, `_mixins.scss` con `@mixin`/`@content`), usados en `mi-cuenta`, `fortaleza-clave` y `notificaciones` (anidamiento, `@use`, `@each`, `color.adjust`). |
+| 12 | Rutas y comunicación entre componentes | `app.routes.ts`: rutas con carga diferida, rutas hijas, parámetros (`/lotes/:id`) enlazados como `input()`, *query params*, ruta comodín, *guards* `canActivate` por sesión y rol, y `canDeactivate` para cambios sin guardar. Comunicación con `input()`/`output()` (p. ej. `FortalezaClave` → `MiCuenta`) y servicios con *signals* (`Auth`, `Notificaciones`). |
+| 13 | Formularios, manejo de errores y validación | Formularios reactivos (`FormBuilder`, `Validators`) en **Mi cuenta** y **Productos**, con validadores propios de campo y de grupo (`core/validadores.ts`: contraseña segura, coincidencia, mínimo < máximo, DNI/RUC). Errores del backend asociados al campo, `ErrorHandler` global con avisos, y formularios de plantilla (`ngModel`) en el resto. |
+| 14 | Consumo de servicios web, API REST, autenticación y autorización | Servicio `Api` sobre `HttpClient`, interceptor JWT (`withInterceptors`) que cierra la sesión ante un 401, login con token, `GET /api/auth/me` y `PATCH /api/auth/password`, permisos por rol en frontend y backend (Spring Security). |
+
 ## Escáner y etiquetas
 
 - **Escanear** (menú *Operación*): lee con la cámara del celular o de la PC el QR o el código de barras de un lote o despacho y muestra su estado con acceso directo a la trazabilidad. También acepta pistolas lectoras USB/Bluetooth, que escriben el código en el campo de búsqueda.
@@ -114,7 +123,7 @@ Todas las rutas, salvo el login, exigen `Authorization: Bearer <token>`. El JSON
 
 | Recurso | Endpoints principales |
 |---|---|
-| Autenticación | `POST /api/auth/login` |
+| Autenticación | `POST /api/auth/login` · `GET /api/auth/me` · `PATCH /api/auth/password` |
 | Panel | `GET /api/dashboard?desde&hasta` |
 | Trazabilidad | `GET /api/trazabilidad/lote/{id}` · `GET /api/trazabilidad/despacho/{id}` |
 | Productos | `GET/POST /api/producto` · `PUT/DELETE /api/producto/{id}` · `GET /api/producto/activos` |

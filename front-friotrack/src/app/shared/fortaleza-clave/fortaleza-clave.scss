@@ -1,0 +1,50 @@
+@use 'sass:map';
+@use 'variables' as v;
+
+// Un color por nivel (1 a 4), aplicado con @each sobre el atributo data-nivel.
+$colores-nivel: (
+  1: v.$alerta,
+  2: v.$aviso,
+  3: v.$escarcha,
+  4: v.$correcto,
+);
+
+.fortaleza {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+
+  &__barras {
+    display: grid;
+    flex: 1;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25rem;
+  }
+
+  &__barra {
+    height: 0.375rem;
+    border-radius: 999px;
+    background: v.hielo(200);
+    transition: background-color 0.2s ease;
+  }
+
+  &__texto {
+    min-width: 7.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  @each $nivel, $color in $colores-nivel {
+    &[data-nivel='#{$nivel}'] {
+      .fortaleza__barra--llena {
+        background: $color;
+      }
+
+      .fortaleza__texto {
+        color: $color;
+      }
+    }
+  }
+}

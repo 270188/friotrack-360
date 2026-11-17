@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { cambiosPendientesGuard } from './core/guards';
 import { authGuard, invitadoGuard, permisoGuard } from './core/auth';
 import { Shell } from './features/shell';
 
@@ -23,6 +24,7 @@ export const routes: Routes = [
       { path: 'comprobantes', title: 'Comprobantes', loadComponent: () => import('./features/comprobantes').then((m) => m.ComprobantesPage) },
       { path: 'comprobantes/nuevo/:tipo', title: 'Nuevo comprobante', canActivate: [permisoGuard('facturar')], loadComponent: () => import('./features/comprobante-nuevo').then((m) => m.ComprobanteNuevoPage) },
       { path: 'comprobantes/:id', title: 'Comprobante', loadComponent: () => import('./features/comprobante-detalle').then((m) => m.ComprobanteDetallePage) },
+      { path: 'mi-cuenta', title: 'Mi cuenta', canDeactivate: [cambiosPendientesGuard], loadComponent: () => import('./features/mi-cuenta/mi-cuenta').then((m) => m.MiCuenta) },
       { path: 'eventos', title: 'Historial', loadComponent: () => import('./features/eventos').then((m) => m.EventosPage) },
       { path: 'productos', title: 'Productos', loadComponent: () => import('./features/productos').then((m) => m.ProductosPage) },
       { path: 'usuarios', title: 'Usuarios', canActivate: [permisoGuard('usuarios')], loadComponent: () => import('./features/usuarios').then((m) => m.UsuariosPage) },

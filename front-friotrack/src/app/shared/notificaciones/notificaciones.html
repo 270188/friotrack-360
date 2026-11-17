@@ -1,0 +1,8 @@
+<div class="notificaciones" aria-live="polite">
+  @for (a of servicio.avisos(); track a.id) {
+    <div class="aviso aviso--{{ a.tipo }}" [attr.role]="a.tipo === 'alerta' ? 'alert' : 'status'">
+      <p class="aviso__texto">{{ a.texto }}</p>
+      <button type="button" class="aviso__cerrar" (click)="servicio.cerrar(a.id)" aria-label="Cerrar aviso">×</button>
+    </div>
+  }
+</div>

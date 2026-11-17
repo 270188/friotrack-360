@@ -68,7 +68,10 @@ public class UsuarioService {
         Usuario usuario = obtener(id);
 
         if (!passwordEncoder.matches(request.passwordActual(), usuario.getPasswordHash())) {
-            throw new BusinessRuleException("La contrasena actual no coincide");
+            throw new BusinessRuleException("La contraseña actual no es correcta");
+        }
+        if (passwordEncoder.matches(request.passwordNuevo(), usuario.getPasswordHash())) {
+            throw new BusinessRuleException("La nueva contraseña debe ser distinta de la actual");
         }
         usuario.setPasswordHash(passwordEncoder.encode(request.passwordNuevo()));
         return usuarioRepository.save(usuario);

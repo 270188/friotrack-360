@@ -12,6 +12,7 @@ const PATHS: Record<string, string> = {
   incidencia: 'M12 3 2 20h20zM12 10v4M12 17v.01',
   traza: 'M5 4v16M5 7h8l2 2h4v6h-6l-2-2H5',
   producto: 'M12 2v20M4.9 6.5l14.2 11M19.1 6.5 4.9 17.5M8 3l4 3 4-3M8 21l4-3 4 3',
+  cuenta: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M5 20a7 7 0 0 1 14 0',
   usuario: 'M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M21 19v-1a4 4 0 0 0-3-3.9M16 3.1a3.5 3.5 0 0 1 0 6.8',
   evento: 'M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18',
   salir: 'M15 4h4v16h-4M10 17l5-5-5-5M15 12H3',
