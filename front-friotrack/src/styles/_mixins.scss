@@ -1,0 +1,35 @@
+// Mixins reutilizables de FrioTrack 360.
+@use 'sass:map';
+@use 'sass:color';
+@use 'variables' as v;
+
+/// Tarjeta blanca con borde y sombra suaves.
+@mixin tarjeta($relleno: 1.25rem) {
+  background: #fff;
+  border: 1px solid rgba(v.tinta(300), 0.35);
+  border-radius: v.$radio;
+  box-shadow: v.$sombra-suave;
+  padding: $relleno;
+}
+
+/// Anillo de foco accesible, igual en toda la app.
+@mixin foco-visible($color: v.$escarcha) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+  }
+}
+
+/// Media query a partir de un quiebre con nombre: @include desde(tableta) { ... }
+@mixin desde($quiebre) {
+  @media (min-width: map.get(v.$quiebres, $quiebre)) {
+    @content;
+  }
+}
+
+/// Fondo suave a partir de un color de estado (10 % de opacidad) y texto más oscuro.
+@mixin insignia($color) {
+  background: rgba($color, 0.12);
+  color: color.adjust($color, $lightness: -12%);
+  border: 1px solid rgba($color, 0.35);
+}

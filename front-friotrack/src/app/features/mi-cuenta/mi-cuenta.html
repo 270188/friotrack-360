@@ -1,0 +1,63 @@
+<header class="mb-6">
+  <h1 class="text-2xl font-bold tracking-tight text-ink-900">Mi cuenta</h1>
+  <p class="mt-1 text-sm text-ink-700">Tus datos y la contraseña con la que ingresas.</p>
+</header>
+
+<div class="mi-cuenta">
+  <section class="perfil" aria-labelledby="titulo-perfil">
+    @if (perfil.error()) { <app-alerta>{{ perfil.error() }}</app-alerta> }
+    @if (perfil.cargando() && !perfil.data()) { <app-cargando /> }
+    @if (perfil.data(); as p) {
+      <div class="perfil__avatar" aria-hidden="true">{{ iniciales() }}</div>
+      <h2 id="titulo-perfil" class="perfil__nombre">{{ p.nombre }} {{ p.apellido }}</h2>
+      <p class="perfil__usuario">&#64;{{ p.username }}</p>
+      <dl class="perfil__datos">
+        <div><dt>Rol</dt><dd><span class="perfil__rol">{{ p.rol | etiqueta }}</span></dd></div>
+        <div><dt>Estado</dt><dd>{{ p.activo ? 'Activo' : 'Inactivo' }}</dd></div>
+        <div><dt>Usuario desde</dt><dd>{{ p.fecha_creacion | fecha }}</dd></div>
+      </dl>
+    }
+  </section>
+
+  <section class="clave" aria-labelledby="titulo-clave">
+    <h2 id="titulo-clave" class="clave__titulo">Cambiar contraseña</h2>
+    <p class="clave__ayuda">Mínimo 8 caracteres, con al menos una letra y un número.</p>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      @if (error()) { <app-alerta class="mb-4">{{ error() }}</app-alerta> }
+
+      <div class="clave__campo">
+        <label class="etiqueta" for="clave-actual">Contraseña actual</label>
+        <input id="clave-actual" class="campo" [type]="mostrar() ? 'text' : 'password'" formControlName="actual" autocomplete="current-password"
+          [attr.aria-invalid]="!!mensaje('actual')" aria-describedby="err-actual" />
+        @if (mensaje('actual'); as m) { <span id="err-actual" class="clave__error">{{ m }}</span> }
+      </div>
+
+      <div class="clave__campo">
+        <label class="etiqueta" for="clave-nueva">Nueva contraseña</label>
+        <input id="clave-nueva" class="campo" [type]="mostrar() ? 'text' : 'password'" formControlName="nueva" autocomplete="new-password"
+          [attr.aria-invalid]="!!mensaje('nueva')" aria-describedby="err-nueva" />
+        <app-fortaleza-clave [clave]="form.controls.nueva.value" (nivelCambio)="nivel.set($event)" />
+        @if (mensaje('nueva'); as m) { <span id="err-nueva" class="clave__error">{{ m }}</span> }
+      </div>
+
+      <div class="clave__campo">
+        <label class="etiqueta" for="clave-confirmar">Confirmar nueva contraseña</label>
+        <input id="clave-confirmar" class="campo" [type]="mostrar() ? 'text' : 'password'" formControlName="confirmar" autocomplete="new-password"
+          [attr.aria-invalid]="!!mensaje('confirmar')" aria-describedby="err-confirmar" />
+        @if (mensaje('confirmar'); as m) { <span id="err-confirmar" class="clave__error">{{ m }}</span> }
+      </div>
+
+      <label class="clave__mostrar">
+        <input type="checkbox" [checked]="mostrar()" (change)="mostrar.set(!mostrar())" /> Mostrar contraseñas
+      </label>
+
+      <div class="clave__acciones">
+        <button type="button" class="btn btn-fantasma" (click)="form.reset()" [disabled]="!form.dirty || enviando()">Limpiar</button>
+        <button type="submit" class="btn btn-primario" [disabled]="enviando()">
+          @if (enviando()) { <span class="spinner"></span> } Guardar contraseña
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

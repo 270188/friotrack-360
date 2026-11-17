@@ -107,11 +107,17 @@ src/app/
     sunat.ts      catálogos e importes de comprobantes; pdf-comprobante.ts genera el PDF
     types.ts      tipos de los DTOs (JSON snake_case)
     format.ts     fechas, números y etiquetas; pipes en pipes.ts
+    validadores.ts  validadores propios para formularios reactivos y mensajes por campo
+    notificaciones.ts / errores.ts  avisos (toasts) y ErrorHandler global
+    guards.ts     canDeactivate: pregunta antes de salir con cambios sin guardar
   shared/
     ui.ts         insignias, alertas, modal, paginación, KPI, iconos
     dominio.ts    gráfico de temperatura, línea de tiempo, tablas y listas
     formularios.ts  lote, despacho, lectura de control, no conformidad
     etiqueta.ts   etiqueta imprimible con QR y código de barras
+    fortaleza-clave/, notificaciones/   componentes generados con ng generate (.ts .html .scss .spec.ts)
   features/       una página por ruta (lazy loading) + shell con el menú lateral
+    mi-cuenta/    perfil y cambio de contraseña (formulario reactivo + SCSS)
+src/styles/       parciales SASS: _variables.scss (paleta, mapas, funciones) y _mixins.scss
 docker/           nginx y script de configuración en tiempo de ejecución
 ```

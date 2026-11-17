@@ -1,0 +1,10 @@
+@if (nivel() > 0) {
+  <div class="fortaleza" [attr.data-nivel]="nivel()" role="status" aria-live="polite">
+    <div class="fortaleza__barras" aria-hidden="true">
+      @for (s of segmentos; track s) {
+        <span class="fortaleza__barra" [class.fortaleza__barra--llena]="s <= nivel()"></span>
+      }
+    </div>
+    <span class="fortaleza__texto">Seguridad: {{ texto() }}</span>
+  </div>
+}

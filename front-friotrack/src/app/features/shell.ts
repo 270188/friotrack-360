@@ -32,6 +32,7 @@ const NAV: { grupo: string; items: Item[] }[] = [
   { grupo: 'Configuración', items: [
     { ruta: '/productos', texto: 'Productos', icono: 'producto' },
     { ruta: '/usuarios', texto: 'Usuarios', icono: 'usuario', permiso: 'usuarios' },
+    { ruta: '/mi-cuenta', texto: 'Mi cuenta', icono: 'cuenta' },
   ] },
 ];
 
@@ -73,10 +74,10 @@ const NAV: { grupo: string; items: Item[] }[] = [
       <div class="border-t border-white/10 px-4 py-4">
         <div class="flex items-center gap-3">
           <span class="grid size-9 place-items-center rounded-full bg-ink-800 text-sm font-bold text-frost-300 uppercase">{{ iniciales() }}</span>
-          <div class="min-w-0 flex-1 leading-tight">
+          <a routerLink="/mi-cuenta" class="min-w-0 flex-1 rounded-md leading-tight hover:bg-white/5" title="Mi cuenta">
             <p class="truncate text-sm font-semibold text-white">{{ auth.sesion()?.username }}</p>
             <p class="text-xs text-ink-300">{{ auth.rol() | etiqueta }}</p>
-          </div>
+          </a>
           <button type="button" (click)="auth.logout()" class="cursor-pointer rounded-md p-2 text-ink-300 hover:bg-white/10 hover:text-white"
             aria-label="Cerrar sesión" title="Cerrar sesión"><app-icono nombre="salir" clase="size-[18px]" /></button>
         </div>

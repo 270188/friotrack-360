@@ -1,0 +1,48 @@
+// Paleta y medidas de FrioTrack 360 en SASS.
+// Son los mismos valores que el tema de Tailwind (src/styles.css) para que todo combine.
+@use 'sass:map';
+
+$tinta: (
+  950: #071923,
+  900: #0b2533,
+  800: #16465a,
+  700: #3e5a66,
+  500: #6b8590,
+  300: #a9bcc4,
+);
+
+$hielo: (
+  50: #f5fafb,
+  100: #eaf5f7,
+  200: #d4ecf0,
+);
+
+$escarcha: #12a4b8;
+$escarcha-claro: #7fd1dc;
+$alerta: #f2643d;
+$aviso: #e8a317;
+$correcto: #2e9e6b;
+
+/// Estados con su color, para generar clases con @each.
+$estados: (
+  ok: $correcto,
+  aviso: $aviso,
+  alerta: $alerta,
+  info: $escarcha,
+);
+
+$radio: 0.75rem;
+$sombra-suave: 0 1px 2px rgba(11, 37, 51, 0.06), 0 4px 16px rgba(11, 37, 51, 0.06);
+
+$quiebres: (
+  movil: 640px,
+  tableta: 1024px,
+);
+
+@function tinta($tono) {
+  @return map.get($tinta, $tono);
+}
+
+@function hielo($tono) {
+  @return map.get($hielo, $tono);
+}

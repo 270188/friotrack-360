@@ -46,6 +46,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/error", "/actuator/health").permitAll()
+                        // Perfil propio y cambio de la propia contrasena: cualquier usuario autenticado.
+                        .requestMatchers("/api/auth/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/usuario/**")
                         .hasAnyRole("OPERADOR", "CALIDAD", "SUPERVISOR", "ADMIN")
                         .requestMatchers("/api/usuario/**").hasRole("ADMIN")

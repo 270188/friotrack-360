@@ -1,0 +1,143 @@
+@use 'sass:color';
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.mi-cuenta {
+  display: grid;
+  gap: 1.5rem;
+
+  @include m.desde(tableta) {
+    grid-template-columns: minmax(16rem, 1fr) 2fr;
+    align-items: start;
+  }
+}
+
+.perfil {
+  @include m.tarjeta(1.5rem);
+  text-align: center;
+
+  &__avatar {
+    display: grid;
+    width: 5rem;
+    height: 5rem;
+    margin: 0 auto 1rem;
+    place-items: center;
+    border-radius: 50%;
+    // Degradado calculado con funciones de color de SASS a partir de la paleta.
+    background: linear-gradient(135deg, v.$escarcha, color.adjust(v.$escarcha, $lightness: -18%));
+    color: #fff;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    box-shadow: 0 6px 18px rgba(v.$escarcha, 0.35);
+  }
+
+  &__nombre {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: v.tinta(900);
+  }
+
+  &__usuario {
+    margin: 0.125rem 0 0;
+    font-size: 0.875rem;
+    color: v.tinta(500);
+  }
+
+  &__datos {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.5rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid v.hielo(200);
+    text-align: left;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.875rem;
+    }
+
+    dt {
+      color: v.tinta(500);
+    }
+
+    dd {
+      margin: 0;
+      font-weight: 600;
+      color: v.tinta(900);
+    }
+  }
+
+  &__rol {
+    @include m.insignia(v.$escarcha);
+    padding: 0.125rem 0.625rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+  }
+}
+
+.clave {
+  @include m.tarjeta(1.5rem);
+
+  &__titulo {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: v.tinta(900);
+  }
+
+  &__ayuda {
+    margin: 0.25rem 0 1.25rem;
+    font-size: 0.875rem;
+    color: v.tinta(700);
+  }
+
+  &__campo {
+    display: block;
+    margin-bottom: 1rem;
+
+    // Borde rojo solo en campos con error que el usuario ya tocó.
+    input[aria-invalid='true'] {
+      border-color: v.$alerta;
+
+      &:focus-visible {
+        outline-color: v.$alerta;
+      }
+    }
+  }
+
+  &__error {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: color.adjust(v.$alerta, $lightness: -10%);
+  }
+
+  &__mostrar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: v.tinta(700);
+    cursor: pointer;
+
+    input {
+      @include m.foco-visible;
+      width: 1rem;
+      height: 1rem;
+      accent-color: v.$escarcha;
+    }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+}

@@ -1,29 +1,52 @@
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Api, mensajeError } from '../core/api';
 import { Auth } from '../core/auth';
 import { accion, carga } from '../core/carga';
-import { limpiar, numOrNull } from '../core/format';
+import { limpiar } from '../core/format';
+import { mensajeCampo, rangoValido } from '../core/validadores';
 import { RangoPipe } from '../core/pipes';
 import type { Producto } from '../core/types';
 import { Alerta, Cargando, Icono, Insignia, Modal, Paginacion, Vacio } from '../shared/ui';
 
+/**
+ * Alta y edición de productos con un formulario reactivo: validadores por campo (obligatorio, largo, mínimo
+ * y máximo) y validadores de grupo que exigen mínimo < máximo en temperatura y humedad.
+ */
 @Component({
   selector: 'app-form-producto',
-  imports: [FormsModule, Modal, Alerta],
+  imports: [ReactiveFormsModule, Modal, Alerta],
   template: `
     <app-modal [titulo]="producto() ? 'Editar ' + producto()!.nombre : 'Nuevo producto'" (cerrar)="cerrar.emit()">
-      <form class="grid-form" (ngSubmit)="guardar()">
+      <form class="grid-form" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
         @if (a.error()) { <app-alerta class="col-completa">{{ a.error() }}</app-alerta> }
-        <label class="col-completa block"><span class="etiqueta">Nombre</span><input class="campo" name="nombre" required maxlength="150" [(ngModel)]="f.nombre" /></label>
-        <label class="col-completa block"><span class="etiqueta">Categoría</span><input class="campo" name="categoria" maxlength="100" [(ngModel)]="f.categoria" /></label>
-        <label class="col-completa block"><span class="etiqueta">Descripción</span><textarea class="campo min-h-16" name="desc" [(ngModel)]="f.descripcion"></textarea></label>
-        <label class="block"><span class="etiqueta">Temperatura mínima (°C)</span><input type="number" step="0.01" min="-50" max="50" class="campo" name="tmin" [(ngModel)]="f.temperatura_min" /></label>
-        <label class="block"><span class="etiqueta">Temperatura máxima (°C)</span><input type="number" step="0.01" min="-50" max="50" class="campo" name="tmax" [(ngModel)]="f.temperatura_max" /></label>
-        <label class="block"><span class="etiqueta">Humedad mínima (%)</span><input type="number" step="0.01" min="0" max="100" class="campo" name="hmin" [(ngModel)]="f.humedad_min" /></label>
-        <label class="block"><span class="etiqueta">Humedad máxima (%)</span><input type="number" step="0.01" min="0" max="100" class="campo" name="hmax" [(ngModel)]="f.humedad_max" /></label>
+        <div class="col-completa block"><label class="etiqueta" for="prod-nombre">Nombre</label>
+          <input id="prod-nombre" class="campo" formControlName="nombre" [attr.aria-invalid]="!!err('nombre')" />
+          @if (err('nombre'); as m) { <span class="mt-1 block text-xs font-medium text-alert-600">{{ m }}</span> }</div>
+        <div class="col-completa block"><label class="etiqueta" for="prod-categoria">Categoría</label>
+          <input id="prod-categoria" class="campo" formControlName="categoria" />
+          @if (err('categoria'); as m) { <span class="mt-1 block text-xs font-medium text-alert-600">{{ m }}</span> }</div>
+        <label class="col-completa block"><span class="etiqueta">Descripción</span><textarea class="campo min-h-16" formControlName="descripcion"></textarea></label>
+        <div class="block"><label class="etiqueta" for="prod-temperatura_min">Temperatura mínima (°C)</label>
+          <input id="prod-temperatura_min" type="number" step="0.01" class="campo" formControlName="temperatura_min" />
+          @if (err('temperatura_min'); as m) { <span class="mt-1 block text-xs font-medium text-alert-600">{{ m }}</span> }</div>
+        <div class="block"><label class="etiqueta" for="prod-temperatura_max">Temperatura máxima (°C)</label>
+          <input id="prod-temperatura_max" type="number" step="0.01" class="campo" formControlName="temperatura_max" />
+          @if (err('temperatura_max'); as m) { <span class="mt-1 block text-xs font-medium text-alert-600">{{ m }}</span> }</div>
+        @if (form.hasError('rangoTemperatura')) {
+          <p class="col-completa -mt-2 text-xs font-medium text-alert-600" role="alert">La temperatura mínima debe ser menor que la máxima.</p>
+        }
+        <div class="block"><label class="etiqueta" for="prod-humedad_min">Humedad mínima (%)</label>
+          <input id="prod-humedad_min" type="number" step="0.01" class="campo" formControlName="humedad_min" />
+          @if (err('humedad_min'); as m) { <span class="mt-1 block text-xs font-medium text-alert-600">{{ m }}</span> }</div>
+        <div class="block"><label class="etiqueta" for="prod-humedad_max">Humedad máxima (%)</label>
+          <input id="prod-humedad_max" type="number" step="0.01" class="campo" formControlName="humedad_max" />
+          @if (err('humedad_max'); as m) { <span class="mt-1 block text-xs font-medium text-alert-600">{{ m }}</span> }</div>
+        @if (form.hasError('rangoHumedad')) {
+          <p class="col-completa -mt-2 text-xs font-medium text-alert-600" role="alert">La humedad mínima debe ser menor que la máxima.</p>
+        }
         <label class="col-completa flex items-center gap-2 text-sm text-ink-800">
-          <input type="checkbox" class="size-4 accent-frost-500" name="activo" [(ngModel)]="f.activo" /> Producto activo
+          <input type="checkbox" class="size-4 accent-frost-500" formControlName="activo" /> Producto activo
         </label>
         <div class="acciones-form">
           <button type="button" class="btn btn-secundario" (click)="cerrar.emit()">Cancelar</button>
@@ -34,49 +57,67 @@ import { Alerta, Cargando, Icono, Insignia, Modal, Paginacion, Vacio } from '../
 })
 export class FormProducto implements OnInit {
   private api = inject(Api);
+  private fb = inject(FormBuilder);
   producto = input<Producto | null>(null);
   cerrar = output<void>();
   guardado = output<Producto>();
   a = accion();
-  f = {
-    nombre: '',
-    categoria: '',
-    descripcion: '',
-    temperatura_min: '' as string | number,
-    temperatura_max: '' as string | number,
-    humedad_min: '' as string | number,
-    humedad_max: '' as string | number,
-    activo: true,
-  };
+
+  form = this.fb.group(
+    {
+      nombre: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(150)]),
+      categoria: this.fb.nonNullable.control('', [Validators.maxLength(100)]),
+      descripcion: this.fb.nonNullable.control(''),
+      temperatura_min: this.fb.control<number | null>(null, [Validators.min(-50), Validators.max(50)]),
+      temperatura_max: this.fb.control<number | null>(null, [Validators.min(-50), Validators.max(50)]),
+      humedad_min: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(100)]),
+      humedad_max: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(100)]),
+      activo: this.fb.nonNullable.control(true),
+    },
+    {
+      validators: [
+        rangoValido('temperatura_min', 'temperatura_max', 'rangoTemperatura'),
+        rangoValido('humedad_min', 'humedad_max', 'rangoHumedad'),
+      ],
+    },
+  );
 
   ngOnInit(): void {
     const p = this.producto();
     if (p) {
-      const s = (v: number | null) => (v == null ? '' : v);
-      this.f = {
+      this.form.setValue({
         nombre: p.nombre,
         categoria: p.categoria ?? '',
         descripcion: p.descripcion ?? '',
-        temperatura_min: s(p.temperatura_min),
-        temperatura_max: s(p.temperatura_max),
-        humedad_min: s(p.humedad_min),
-        humedad_max: s(p.humedad_max),
+        temperatura_min: p.temperatura_min,
+        temperatura_max: p.temperatura_max,
+        humedad_min: p.humedad_min,
+        humedad_max: p.humedad_max,
         activo: p.activo,
-      };
+      });
     }
   }
 
+  err(campo: keyof typeof this.form.controls): string | null {
+    return mensajeCampo(this.form.controls[campo], 'El valor');
+  }
+
   async guardar(): Promise<void> {
-    const n = (v: string | number | null) => numOrNull(v == null ? '' : String(v));
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const v = this.form.getRawValue();
+    const n = (x: number | null) => (x === null || (x as unknown) === '' ? null : Number(x));
     const body = limpiar({
-      nombre: this.f.nombre.trim(),
-      categoria: this.f.categoria,
-      descripcion: this.f.descripcion,
-      temperatura_min: n(this.f.temperatura_min),
-      temperatura_max: n(this.f.temperatura_max),
-      humedad_min: n(this.f.humedad_min),
-      humedad_max: n(this.f.humedad_max),
-      activo: this.f.activo,
+      nombre: v.nombre.trim(),
+      categoria: v.categoria,
+      descripcion: v.descripcion,
+      temperatura_min: n(v.temperatura_min),
+      temperatura_max: n(v.temperatura_max),
+      humedad_min: n(v.humedad_min),
+      humedad_max: n(v.humedad_max),
+      activo: v.activo,
     });
     const p = this.producto();
     const r = await this.a.ejecutar(() =>
