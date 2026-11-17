@@ -63,6 +63,29 @@ El navegador de cada usuario llama al backend directamente, así que el backend 
 
 ---
 
+## Alternativa gratuita: Render + Neon (PostgreSQL)
+
+El backend también funciona con PostgreSQL. Así está publicado ahora: el backend en **Render** (servicio web Docker, plan gratuito) y la base de datos en **Neon** (PostgreSQL gratuito y permanente).
+
+1. **Neon:** un proyecto con una base por empresa (`friotrack360`, `polar_piura_sac`). No hace falta cargar nada a mano: el backend crea las tablas al arrancar con `db/postgres/esquema.sql`.
+2. **Render → New → Web Service** desde `friotrack-360`, runtime **Docker**, Dockerfile `Friotrack/Dockerfile` y contexto `Friotrack`. Variables:
+
+   | Variable | Valor |
+   |---|---|
+   | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://<host-de-neon>/<base>?sslmode=require` (host **sin** `-pooler`) |
+   | `SPRING_DATASOURCE_USERNAME` / `_PASSWORD` | usuario y contraseña de Neon |
+   | `SPRING_DATASOURCE_DRIVER_CLASS_NAME` | `org.postgresql.Driver` |
+   | `SPRING_JPA_DATABASE_PLATFORM` | `org.hibernate.dialect.PostgreSQLDialect` |
+   | `SPRING_SQL_INIT_SCHEMA_LOCATIONS` | `classpath:db/postgres/esquema.sql` |
+   | `SPRING_SQL_INIT_SEPARATOR` | `^^^ END OF SCRIPT ^^^` (el script se envía completo por sus bloques `$$`) |
+   | `SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE` | `5` |
+   | `JAVA_TOOL_OPTIONS` | `-XX:MaxRAMPercentage=70 -XX:+UseSerialGC` (el plan gratuito tiene 512 MB) |
+   | `APP_JWT_SECRET`, `APP_CORS_ORIGINS`, `APP_BOOTSTRAP_PASSWORD`, `SUNAT_*` | igual que en Railway |
+
+3. En Vercel, `API_URL` = URL del servicio de Render (`https://<servicio>.onrender.com`) y volver a desplegar.
+
+> En el plan gratuito, Render apaga el servicio tras 15 minutos sin uso: la primera petición después de eso tarda alrededor de un minuto mientras arranca.
+
 ## Problemas frecuentes
 
 | Síntoma | Causa y solución |

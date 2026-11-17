@@ -41,7 +41,7 @@ public class Usuario {
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "rol", nullable = false, columnDefinition = "ENUM('ADMIN','OPERADOR','CALIDAD','SUPERVISOR')")
+    @Column(name = "rol", nullable = false, length = 20)
     private Rol rol = Rol.OPERADOR;
 
     @Column(name = "activo", nullable = false)
