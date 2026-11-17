@@ -36,11 +36,18 @@ public interface IncidenciaRepository extends JpaRepository<Incidencia, Long> {
     @Query("SELECT i FROM Incidencia i WHERE i.control.idControl = :idControl ORDER BY i.fechaCreacion ASC")
     List<Incidencia> porControl(@Param("idControl") Long idControl);
 
-    @Query("""
-            SELECT COALESCE(AVG(TIMESTAMPDIFF(MINUTE, i.fechaCreacion, i.fechaCierre)), 0)
-            FROM Incidencia i
-            WHERE i.fechaCierre IS NOT NULL
-            """)
-    double promedioMinutosResolucion();
+    @Query("SELECT i.fechaCreacion, i.fechaCierre FROM Incidencia i WHERE i.fechaCierre IS NOT NULL")
+    List<Object[]> fechasDeResolucion();
+
+    /**
+     * Minutos promedio entre la apertura y el cierre de las incidencias cerradas.
+     * Se calcula en Java para que funcione igual en MySQL y PostgreSQL (TIMESTAMPDIFF es solo de MySQL).
+     */
+    default double promedioMinutosResolucion() {
+        return fechasDeResolucion().stream()
+                .mapToLong(f -> java.time.Duration.between((java.time.LocalDateTime) f[0], (java.time.LocalDateTime) f[1]).toMinutes())
+                .average()
+                .orElse(0);
+    }
 
 }
