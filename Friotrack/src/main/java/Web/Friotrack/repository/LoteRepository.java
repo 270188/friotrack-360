@@ -31,7 +31,7 @@ public interface LoteRepository extends JpaRepository<Lote, Long> {
             SELECT l FROM Lote l
             WHERE (:estado IS NULL OR l.estado = :estado)
               AND (:idProducto IS NULL OR l.producto.idProducto = :idProducto)
-              AND (:q IS NULL OR LOWER(l.codigoLote) LIKE LOWER(CONCAT('%', :q, '%')))
+              AND (CAST(:q AS String) IS NULL OR LOWER(l.codigoLote) LIKE LOWER(CONCAT('%', CAST(:q AS String), '%')))
             """)
     Page<Lote> buscar(@Param("q") String q,
                       @Param("estado") Lote.Estado estado,
