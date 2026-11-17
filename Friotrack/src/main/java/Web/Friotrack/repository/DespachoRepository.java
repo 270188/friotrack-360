@@ -27,9 +27,9 @@ public interface DespachoRepository extends JpaRepository<Despacho, Long> {
     @Query("""
             SELECT d FROM Despacho d
             WHERE (:estado IS NULL OR d.estado = :estado)
-              AND (:q IS NULL OR LOWER(d.codigo) LIKE LOWER(CONCAT('%', :q, '%'))
-                   OR LOWER(d.destino) LIKE LOWER(CONCAT('%', :q, '%'))
-                   OR LOWER(COALESCE(d.transportista, '')) LIKE LOWER(CONCAT('%', :q, '%')))
+              AND (CAST(:q AS String) IS NULL OR LOWER(d.codigo) LIKE LOWER(CONCAT('%', CAST(:q AS String), '%'))
+                   OR LOWER(d.destino) LIKE LOWER(CONCAT('%', CAST(:q AS String), '%'))
+                   OR LOWER(COALESCE(d.transportista, '')) LIKE LOWER(CONCAT('%', CAST(:q AS String), '%')))
             """)
     Page<Despacho> buscar(@Param("q") String q,
                           @Param("estado") Despacho.Estado estado,

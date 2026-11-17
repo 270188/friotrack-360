@@ -18,9 +18,9 @@ public interface ComprobanteRepository extends JpaRepository<Comprobante, Long> 
     @Query("""
             SELECT c FROM Comprobante c
             WHERE (:tipo IS NULL OR c.tipo = :tipo)
-              AND (:q IS NULL OR LOWER(c.clienteNombre) LIKE LOWER(CONCAT('%', :q, '%'))
-                   OR c.clienteNumDoc LIKE CONCAT('%', :q, '%')
-                   OR LOWER(CONCAT(c.serie, '-', CAST(c.correlativo AS String))) LIKE LOWER(CONCAT('%', :q, '%')))
+              AND (CAST(:q AS String) IS NULL OR LOWER(c.clienteNombre) LIKE LOWER(CONCAT('%', CAST(:q AS String), '%'))
+                   OR c.clienteNumDoc LIKE CONCAT('%', CAST(:q AS String), '%')
+                   OR LOWER(CONCAT(c.serie, '-', CAST(c.correlativo AS String))) LIKE LOWER(CONCAT('%', CAST(:q AS String), '%')))
             """)
     Page<Comprobante> buscar(@Param("tipo") String tipo, @Param("q") String q, Pageable pageable);
 

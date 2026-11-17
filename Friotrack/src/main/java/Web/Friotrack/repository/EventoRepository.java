@@ -40,8 +40,8 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
             WHERE (:idLote IS NULL OR e.lote.idLote = :idLote)
               AND (:idDespacho IS NULL OR e.despacho.idDespacho = :idDespacho)
               AND (:tipo IS NULL OR e.tipo = :tipo)
-              AND (:desde IS NULL OR e.fechaHora >= :desde)
-              AND (:hasta IS NULL OR e.fechaHora <= :hasta)
+              AND (CAST(:desde AS LocalDateTime) IS NULL OR e.fechaHora >= :desde)
+              AND (CAST(:hasta AS LocalDateTime) IS NULL OR e.fechaHora <= :hasta)
             """)
     Page<Evento> buscar(@Param("idLote") Long idLote,
                         @Param("idDespacho") Long idDespacho,
