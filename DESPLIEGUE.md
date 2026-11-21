@@ -139,3 +139,16 @@ Las tablas `comprobante` y `comprobante_item` se crean solas al arrancar el back
 Para comprobar la conexión con SUNAT: `SUNAT_PRUEBA_AL_INICIAR=true` envía al arrancar una factura y una boleta de prueba (series `FT99` / `BT99`, no se guardan) y escribe la respuesta en el log (`=== PRUEBA SUNAT ...`). Después vuelve a ponerla en `false`.
 
 **Producción (emisión real).** Solo con autorización de la empresa: RUC real inscrito como emisor electrónico, `SUNAT_USUARIO_SOL` y `SUNAT_CLAVE_SOL` de un usuario secundario SOL, un certificado digital vigente (`SUNAT_CERTIFICADO=file:/ruta/certificado.p12` y `SUNAT_CERTIFICADO_CLAVE`), `SUNAT_ENTORNO=PRODUCCION` y `SUNAT_URL=https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService`. El envío de guías en producción usa otra API de SUNAT (REST con credenciales GRE) que no está implementada.
+
+## API en Netlify Functions (`api-netlify/`)
+
+Render suspendió los servicios gratuitos por exceso de uso, así que el backend se reescribió en TypeScript como una Netlify Function (`api-netlify/`). Expone las mismas rutas `/api/...`, el mismo JSON y usa las mismas bases de Neon, por lo que los frontends solo cambian `API_URL`.
+
+| Sitio de Netlify | Base de datos | Frontend |
+|---|---|---|
+| `friotrack-360-api` | `friotrack360` | `friotrack-360.vercel.app` |
+| `polar-piura-sac-api` | `polar_piura_sac` | `polar-piura-sac.vercel.app` |
+
+Configuración del sitio en Netlify: *Base directory* `api-netlify`, sin comando de build, *Publish directory* `public` (ya está en `netlify.toml`). Variables: `DATABASE_URL` (cadena *pooled* de Neon), `APP_JWT_SECRET` (≥ 32 caracteres), `APP_CORS_ORIGINS` y las `SUNAT_*` de la tabla anterior.
+
+Pruebas locales: `cd api-netlify && npm install && npm test` (PostgreSQL en memoria con PGlite).
