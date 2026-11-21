@@ -1,0 +1,8 @@
+# API REST de FrioTrack 360 en Netlify Functions (reemplaza el backend Spring Boot de Render).
+[build]
+  command = ""
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
